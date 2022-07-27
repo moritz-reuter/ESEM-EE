@@ -1,20 +1,45 @@
 #%% Packages
+from os import stat_result
+from sqlite3 import SQLITE_ALTER_TABLE
 from nose import collector
+import streamlit as st
 import pvlib as pv
 import windpowerlib as wind
 import oemof.thermal as therm
 import pandas as pd
 import numpy as np
-# import demandlib as demand
+
+### User 'packages'
 import demand_fn
 import weather_fn
 import thermal_fn
 import helper_functions
 import feedin_fn
 import calc
+import gui
 
-
+###########################
 data = 'data.xlsx'
+###########################
+''' Submit function for running script after streamlit user input
+submission: dictionary that stores user input variables
+
+# def submit(submission):
+
+    year = submission[0]
+    bldstd = submission[1]
+    floors = submission[2]
+    l = submission[3]
+    h = submission[4]
+    lat = submission[5]
+    b = submission[6]
+    occupants = submission[7]
+    lon = submission[8]
+
+    ...
+    Execute scripts and return dataframe of results!
+'''
+
 
 #%% Streamlit user info
 year                    = 2019
@@ -22,18 +47,22 @@ number_household        = 2 # --> is this important?
 annual_elec_demand      = 1500  # kWh
 annual_heat_demand      = 15000 # kWh
 slp_type_heat           = 'EFH' # MFH
-slp_type_elec           = 'h0'  # --> write function to determine elec_slp based on heat_slp 
+slp_type_elec           = 'h0'  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
 lat                     = 52.52
 lon                     = 13.4050
-co2_price               = 80 # €/tCO2
+province                = 'SH' #see list of provinces in XL
 elec_mix                = 'G_DE'
 heat_tech               = 'CHB' # read in from list of heat_techs
 heat_system             = 'HKS'
-co2_price               = 300 # €/tCO2
-province                = 'SH' #see list of provinces in XL
+co2_price_sim           = 'BAU' # €/tCO2 --> write function to determine price per kg for sim selection
+
 pv_area                 = 10 # m2
 heat_pump               = 'HP_air' # HP_ground, HP_water
 st_collector            = 'tube'
+st_area                 = 10
+
+###############################################
+co2_price = calc.co2_price(co2_price_sim, data)
 
 #%% Weather
 weather_hourly = weather_fn.tmy_data(lat, lon)
@@ -67,7 +96,8 @@ wind_elec           = pd.DataFrame([0]*len(weather_hourly)).set_index(time_index
 #%% Solar thermal - Heat feedin
 soltherm_data = helper_functions.sheet_xl(data, 'soltherm_data')
 
-st_feedin = thermal_fn.soltherm_heat(st_collector, lat, lon, soltherm_data, weather_hourly, time_index_year) / 1000
+st_feedin_spec  = thermal_fn.soltherm_heat(st_collector, lat, lon, soltherm_data, weather_hourly, time_index_year) / 1000
+st_feedin       = st_feedin_spec * st_area
 
 #%% Heat pump
 '''
