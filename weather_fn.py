@@ -5,6 +5,23 @@ import pvlib as pv
 import numpy as np
 import pandas as pd
 import requests
+from feedinlib import era5
+import cdsapi
+
+
+#%%
+# c = cdsapi.Client()
+# c.retrieve("reanalysis-era5-pressure-levels",
+# {
+# "variable": "temperature",
+# "pressure_level": "1000",
+# "product_type": "reanalysis",
+# "year": "2008",
+# "month": "01",
+# "day": "01",
+# "time": "12:00",
+# "format": "grib"
+# }, "download.grib")
 
 #%% TMY Data (PVGIS)
 def tmy_data(lat, lon):
@@ -30,3 +47,14 @@ def sky_data(lat, lon, year):
     sky = pd.DataFrame.from_dict(sky_data_api["weather"][0:8760]) 
 
     return sky
+
+def era5_weather(lat, lon, year, variable):
+    target_file = f'weather_era5_{variable}.nc'
+    start_date, end_date = f'{year}-01-01', f'{year+1}-01-01'
+    ds = era5.get_era5_data_from_datespan_and_position(
+        variable=variable,
+        start_date=start_date, end_date=end_date,
+        latitude=lat, longitude=lon,
+        target_file=target_file)
+
+    return ds

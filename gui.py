@@ -1,3 +1,4 @@
+#%%
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,8 +6,8 @@ import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 
-import main
 import helper_functions
+import main_submit
 from thermal_fn import soltherm_heat
 
 ###########################
@@ -15,14 +16,15 @@ data = 'data.xlsx'
 
 
 #%% Options #######################################
+tech_data = helper_functions.sheet_xl(data, 'tech')
 elec_slp_options    = helper_functions.sheet_xl(data, 'heat_slp')['name']
 prov_options        = helper_functions.sheet_xl(data, 'provinces')['value']
-elec_mix_options    = helper_functions.sheet_xl(data, 'tech').index.str.contains('G_').values
-heat_tech_options   = helper_functions.sheet_xl(data, 'tech').index.str.contains('G_').values
+elec_mix_options    = tech_data[tech_data.index.str.contains('G_')].index.to_list()
+heat_tech_options   = tech_data[tech_data['energy'] == 'heat'].index.to_list()
 heat_system_options = ['FBH', 'HKS'] #make flexible via 
-co2_price_options   = helper_functions.sheet_xl(data, 'co2').index.values
-heat_pump_options   = helper_functions.sheet_xl(data, 'tech').index.str.contains('HP_').values
-st_tech_options     = helper_functions.sheet_xl(data, 'soltherm_data').index.values
+co2_price_options   = helper_functions.sheet_xl(data, 'co2').index.to_list()
+heat_pump_options   = tech_data[tech_data.index.str.contains('HP_')].index.to_list()
+st_tech_options     = helper_functions.sheet_xl(data, 'soltherm_data').index.to_list()
 
 #%% GUI
 try:
@@ -39,7 +41,7 @@ try:
         st.write('Der aktuelle Breitengrad ist: ', lat)
         lon                 = col1.number_input(label='Longitude', step=1., value=13.41, key='lon')
         st.write('Der aktuelle Längengrad ist: ', lon)
-        province            = col1.selectbox(label='"Bundesland" (abbv)', step=100, options = prov_options,key='province')    #see list of provinces in XL
+        province            = col1.selectbox(label='"Bundesland" (abbv)', options = prov_options,key='province')    #see list of provinces in XL
 
         elec_mix_old        = col1.selectbox(label='Stromtarif - Aktuell', options = elec_mix_options,key='elec_mix_old') 
         heat_tech           = col1.selectbox(label='Heizungstechnnologie - Aktuell', options = heat_tech_options,key='heat_tech_old') #'CHB' # read in from list of heat_techs
@@ -50,6 +52,7 @@ try:
         heat_pump           = col1.selectbox(label='CO2-Reduktionspfad', options = heat_pump_options,key='co2_price_sim') #'HP_air' # HP_ground, HP_water
         st_collector        = col1.selectbox(label='Solarthermie Technologie (Nicht-konzentriert)', options = st_tech_options,key='st_collector') 
         st_area             = col1.number_input(label='Solarthermie-Anlagenfläche', step=1., value=10., key='st_area') # 10 # m2
+        hub_height          = col1.number_input(label='Windkraftanlage - Nabenhöhe', step=1., value=15., key='hub_height') # 10 # m2
         # col3, col4 = st.columns(2)
 
 
@@ -75,10 +78,11 @@ try:
             'heat_pump':heat_pump,
             'st_collector':st_collector,
             'st_area':st_area,
+            'hub_height': hub_height
         }
 
         #st.write(submission)
-        df = main.submit(submission)
+        df = main_submit.submit(submission)
         # --> main.submit function for running simulation with given user variables
         # --> if main.submit returns df --> makes plot easy!
 

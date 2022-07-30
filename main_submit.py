@@ -41,6 +41,7 @@ def submit(submission):
     heat_pump               = submission['heat_pump'] # HP_ground, HP_water
     st_collector            = submission['st_collector']
     st_area                 = submission['st_area']
+    hub_height              = submission['hub_height']
 
     ###############################################
     co2_price = calc.co2_price(co2_price_sim, data)
@@ -71,7 +72,7 @@ def submit(submission):
     pv_elec             = pd.DataFrame((pv_elec_per_m2*pv_area) / 1000).set_index(time_index_year)
 
     ### Wind [kWh] ###
-    wind_elec           = pd.DataFrame([0]*len(weather_hourly)).set_index(time_index_year)
+    wind_elec           = feedin_fn.wind_elec(weather_hourly, hub_height, data, lat, lon)
 
     ##########      Heat        #################################
     #%% Solar thermal - Heat feedin
@@ -162,3 +163,4 @@ def submit(submission):
     df_calculation = pd.DataFrame()
 
     return df_calculation
+# %%

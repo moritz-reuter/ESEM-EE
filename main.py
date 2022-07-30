@@ -2,12 +2,14 @@
 from os import stat_result
 from sqlite3 import SQLITE_ALTER_TABLE
 from nose import collector
-import streamlit as st
+# import streamlit as st
 import pvlib as pv
 import windpowerlib as wind
 import oemof.thermal as therm
 import pandas as pd
 import numpy as np
+from feedinlib import era5
+
 
 ### User 'packages'
 import demand_fn
@@ -16,30 +18,11 @@ import thermal_fn
 import helper_functions
 import feedin_fn
 import calc
-import gui
+# import gui
 
 ###########################
 data = 'data.xlsx'
 ###########################
-''' Submit function for running script after streamlit user input
-submission: dictionary that stores user input variables
-
-# def submit(submission):
-
-    year = submission[0]
-    bldstd = submission[1]
-    floors = submission[2]
-    l = submission[3]
-    h = submission[4]
-    lat = submission[5]
-    b = submission[6]
-    occupants = submission[7]
-    lon = submission[8]
-
-    ...
-    Execute scripts and return dataframe of results!
-'''
-
 
 #%% Streamlit user info
 year                    = 2019
@@ -60,13 +43,15 @@ pv_area                 = 10 # m2
 heat_pump               = 'HP_air' # HP_ground, HP_water
 st_collector            = 'tube'
 st_area                 = 10
+hub_height              = 15
 
 ###############################################
 co2_price = calc.co2_price(co2_price_sim, data)
 
 #%% Weather
-weather_hourly = weather_fn.tmy_data(lat, lon)
-
+# weather_hourly = weather_fn.tmy_data(lat, lon)
+pv_hourly = weather_fn.era5_weather(lat, lon, year, 'pvlib')
+wind_hourly = weather_fn.era5_weather(lat, lon, year, 'windpowerlib')
 
 #%%#########    Demand      ###########################
 
@@ -86,11 +71,15 @@ renewable_elec = ['PV', 'Wind']
 ### PV [kWh] ###
 module              = "Silevo_Triex_U300_Black__2014_"
 inverter            = "ABB__MICRO_0_3_I_OUTD_US_240__240V_"
-pv_elec_per_m2      = feedin_fn.pv_elec(weather_hourly, module, inverter, lat, lon)
-pv_elec             = pd.DataFrame((pv_elec_per_m2*pv_area) / 1000).set_index(time_index_year)
+pv_elec_watt_per_m2 = feedin_fn.pv_elec(weather_hourly, module, inverter, lat, lon)
+pv_elec             = pd.DataFrame((pv_elec_watt_per_m2*pv_area) / 1000).set_index(time_index_year)
 
+#%%
 ### Wind [kWh] ###
-wind_elec           = pd.DataFrame([0]*len(weather_hourly)).set_index(time_index_year)
+wind_weather = weather_hourly
+wind_weather.index.name = None
+wind_elec_watt      = feedin_fn.wind_elec(wind_weather, hub_height, data, lat, lon)
+wind_elec           = pd.DataFrame(wind_elec_watt).set_index(time_index_year)
 
 ##########      Heat        #################################
 #%% Solar thermal - Heat feedin
