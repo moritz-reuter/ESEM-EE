@@ -47,8 +47,10 @@ hub_height              = 15
 co2_price = calc.co2_price(co2_price_sim, data)
 
 #%% Weather
-weather_hourly = weather_fn.tmy_data(lat, lon)
-wind_hourly    = weather_fn.wind_weather_openfred(lat, lon, year, hub_height)
+weather_hourly          = weather_fn.tmy_data(lat, lon)
+wind_hourly             = weather_hourly[['wind_speed', 'pressure']].rename_axis(None, axis=0)
+wind_hourly.columns     = pd.MultiIndex.from_product([wind_hourly.columns, [hub_height]])
+
 # pv_hourly = weather_fn.era5_weather(lat, lon, year, 'pvlib')
 # wind_hourly = weather_fn.era5_weather(lat, lon, year, 'windpowerlib')
 
@@ -78,7 +80,7 @@ pv_elec             = pd.DataFrame((pv_elec_watt_per_m2*pv_area) / 1000).set_ind
 ### Wind [kWh] ###
 wind_weather = weather_hourly
 wind_weather.index.name = None
-wind_elec_watt      = feedin_fn.wind_elec(wind_weather, hub_height, data, lat, lon)
+wind_elec_watt      = feedin_fn.wind_elec(wind_hourly, hub_height, data, lat, lon)
 wind_elec           = pd.DataFrame(wind_elec_watt).set_index(time_index_year)
 
 ##########      Heat        #################################
