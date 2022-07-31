@@ -8,8 +8,6 @@ import windpowerlib as wind
 import oemof.thermal as therm
 import pandas as pd
 import numpy as np
-from feedinlib import era5
-
 
 ### User 'packages'
 import demand_fn
@@ -49,10 +47,12 @@ hub_height              = 15
 co2_price = calc.co2_price(co2_price_sim, data)
 
 #%% Weather
-# weather_hourly = weather_fn.tmy_data(lat, lon)
-pv_hourly = weather_fn.era5_weather(lat, lon, year, 'pvlib')
-wind_hourly = weather_fn.era5_weather(lat, lon, year, 'windpowerlib')
+weather_hourly = weather_fn.tmy_data(lat, lon)
+wind_hourly    = weather_fn.wind_weather_openfred(lat, lon, year, hub_height)
+# pv_hourly = weather_fn.era5_weather(lat, lon, year, 'pvlib')
+# wind_hourly = weather_fn.era5_weather(lat, lon, year, 'windpowerlib')
 
+# wind_hourly = 
 #%%#########    Demand      ###########################
 
 ### Electrical load profile ###

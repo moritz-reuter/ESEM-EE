@@ -7,7 +7,8 @@ import pandas as pd
 import requests
 from feedinlib import era5
 import cdsapi
-
+from feedinlib.open_FRED import Weather, defaultdb
+from shapely.geometry import Point
 
 #%%
 # c = cdsapi.Client()
@@ -33,6 +34,20 @@ def tmy_data(lat, lon):
     tmy = tmy_data_api[0]
     
     return tmy
+
+def wind_weather_openfred(lat, lon, year, hub_height):
+    start_date = str(year) + '-1-1'
+    end_date = str(year+1) + '-1-1'
+    location = Point(lon, lat)
+    raw_data_wind = Weather(
+        start=start_date,
+        stop=end_date, 
+        locations=[location],
+        heights= [hub_height],
+        variables = "windpowerlib",
+        **defaultdb())
+    return raw_data_wind
+
 
 def sky_data(lat, lon, year):
     query = {
