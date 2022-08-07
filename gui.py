@@ -16,7 +16,7 @@ data = 'data.xlsx'
 
 
 #%% Options #######################################
-tech_data = helper_functions.sheet_xl(data, 'tech')
+tech_data           = helper_functions.sheet_xl(data, 'tech')
 elec_slp_options    = helper_functions.sheet_xl(data, 'heat_slp')['name']
 prov_options        = helper_functions.sheet_xl(data, 'provinces')['value']
 elec_mix_options    = tech_data[tech_data.index.str.contains('G_')].index.to_list()

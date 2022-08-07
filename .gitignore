@@ -1,2 +1,4 @@
 
 __pycache__/weather_fn.cpython-37.pyc
+__pycache__/gui.cpython-37.pyc
+*.pyc
