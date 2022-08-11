@@ -1,6 +1,5 @@
 #%% Packages
 from statistics import mode
-from markupsafe import re
 import oemof.thermal as therm
 import pandas as pd
 import numpy as np
