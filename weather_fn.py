@@ -5,10 +5,7 @@ import pvlib as pv
 import numpy as np
 import pandas as pd
 import requests
-from feedinlib import era5
-import cdsapi
-from feedinlib.open_FRED import Weather, defaultdb
-from shapely.geometry import Point
+
 
 #%%
 # c = cdsapi.Client()
