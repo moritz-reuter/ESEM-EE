@@ -82,7 +82,8 @@ pv_elec             = pd.DataFrame((pv_elec_watt_per_m2*pv_area) / 1000).set_ind
 # wind_weather.index.name = None
 # wind_elec_watt      = feedin_fn.wind_elec(wind_hourly, hub_height, data, lat, lon)
 # wind_elec           = pd.DataFrame(wind_elec_watt).set_index(time_index_year)
-wind_elec           = [0.]*len(pv_elec)
+wind_elec           = pd.DataFrame([0]*len(pv_elec), index= time_index_year)
+
 ##########      Heat        #################################
 #%% Solar thermal - Heat feedin
 soltherm_data = helper_functions.sheet_xl(data, 'soltherm_data')
@@ -99,9 +100,14 @@ T_in, T_out, quality_grade_hp = thermal_fn.heating_params(heat_system, heat_pump
 
 heat_demand_renewable = heat_demand_hourly - st_feedin['collectors_heat']
 
+'''
+heat_pump_el calculates the (additional) hourly electricity demand stemming from the use of a heat pump for heating.
+Units (and dimensions) are derived from the input paramater heat_demand_renewable, which calculates the excess heat_demand after factoring 
+in the heat energy that is provided through a solar thermal (roof) 
+'''
 heat_pump_el, cop = thermal_fn.heat_pump_el(T_in, T_out, heat_demand_renewable, quality_grade_hp)
 
-jaz = heat_demand_hourly.sum() / heat_pump_el.sum()
+# jaz = heat_demand_hourly.sum() / heat_pump_el.sum()
 
 
 #%% ###### CO2 emissions ##############
@@ -115,8 +121,8 @@ co2_old_elec = calc.co2_kwh(elec_mix, tech_data, elec_demand_hourly) /1000
 new_elec_demand = heat_pump_el + elec_demand_hourly
 
 renewable_feedin_dict = {'PV': pv_elec[0],
-                    'Wind': wind_elec[0]
-                    }
+                        'Wind': wind_elec[0]
+                        }
 renewable_feedin = pd.DataFrame.from_dict(renewable_feedin_dict)
 
 ren_tech_co2 = []
