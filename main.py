@@ -152,7 +152,7 @@ old_co2 = co2_old_gas + co2_old_elec
 new_co2 = co2_new_elec[0] + co2_new_gas[0]
 
 # If comp > 0 --> new_co2 is smaller than old_co2!
-comp =  np.subtract(old_co2.values, new_co2.values)
+comp =  pd.DataFrame(np.subtract(old_co2.values, new_co2.values), columns = ['comp']).set_index(time_index_year)
 
 #%%######### Savings ###########
 #%% Without CO2-price ####
@@ -165,7 +165,7 @@ old_price_energy = old_price_elec + old_price_gas
 new_price_energy  = new_price_gas + new_price_elec
 
 ## Savings in €
-price_diff = np.subtract(old_price_energy, new_price_energy) /100 # positive means savings! 
+price_diff = pd.DataFrame(np.subtract(old_price_energy, new_price_energy) /100, columns = ['price_diff']) # positive means savings! 
 
 #%% With CO2-Price
 old_price_co2 = old_co2 * co2_price_kg
@@ -174,7 +174,11 @@ old_price_total = old_price_co2 + old_price_energy/100
 new_price_co2 = new_co2* co2_price_kg
 new_price_total = new_price_co2 + new_price_energy/100
 
-total_diff = np.subtract(old_price_total, new_price_total)
+total_diff = pd.DataFrame(np.subtract(old_price_total, new_price_total), columns = ['total_diff'])
 
 
+#%% OUTPUT
+
+df = pd.concat([comp, price_diff, total_diff], axis = 1)
+df.columns = ['comp', 'price_diff', 'total_diff']
 #%% 

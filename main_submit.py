@@ -16,12 +16,12 @@ import calc
 import gui
 
 ###########################
-data = 'data.xlsx'
-###########################
+data = '/Users/mreuter/Documents/GitHub/ESEM----EE/data.xlsx'
+###########################'
 
 def submit(submission):
     year                    = submission['year']
-    number_household        = submission['number_household'] # --> is this important?
+    # number_household        = submission['number_household'] # --> is this important?
     annual_elec_demand      = submission['annual_elec_demand']  # kWh
     annual_heat_demand      = submission['annual_heat_demand'] # kWh
     slp_type_heat           = submission['slp_type_heat'] # MFH
@@ -29,8 +29,8 @@ def submit(submission):
     lat                     = submission['lat']
     lon                     = submission['lon']
     province                = submission['province'] #see list of provinces in XL
-    elec_mix                = submission['elec_mix']
-    heat_tech               = submission['heat_tech'] # read in from list of heat_techs
+    elec_mix_old            = submission['elec_mix_old']
+    heat_tech               = submission['heat_tech_old'] # read in from list of heat_techs
     heat_system             = submission['heat_system']
     co2_price_sim           = submission['co2_price_sim'] # €/tCO2 --> write function to determine price per kg for sim selection
 
@@ -38,7 +38,7 @@ def submit(submission):
     heat_pump               = submission['heat_pump'] # HP_ground, HP_water
     st_collector            = submission['st_collector']
     st_area                 = submission['st_area']
-    hub_height              = submission['hub_height']
+    # hub_height              = submission['hub_height']
 
     ###############################################
     ###############################################
@@ -112,7 +112,7 @@ def submit(submission):
     co2_price_kg = co2_price/1000 # €/kgCO2
 
     #%% Electricity
-    co2_old_elec = calc.co2_kwh(elec_mix, tech_data, elec_demand_hourly) /1000
+    co2_old_elec = calc.co2_kwh(elec_mix_old, tech_data, elec_demand_hourly) /1000
 
     ####
     new_elec_demand = heat_pump_el + elec_demand_hourly
@@ -129,7 +129,7 @@ def submit(submission):
 
     residual_load = new_elec_demand - renewable_feedin.sum(axis = 1)
 
-    co2_grid = calc.co2_kwh(elec_mix, tech_data, residual_load) / 1000
+    co2_grid = calc.co2_kwh(elec_mix_old, tech_data, residual_load) / 1000
 
     co2_sum_new = co2_grid + sum(ren_tech_co2)
     #%%
@@ -149,20 +149,20 @@ def submit(submission):
     new_co2 = co2_new_elec[0] + co2_new_gas[0]
 
     # If comp > 0 --> new_co2 is smaller than old_co2!
-    comp =  np.subtract(old_co2.values, new_co2.values)
+    comp =  pd.DataFrame(np.subtract(old_co2.values, new_co2.values), columns = ['comp']).set_index(time_index_year)
 
     #%%######### Savings ###########
     #%% Without CO2-price ####
-    old_price_elec = calc.price_kwh(elec_mix,tech_data,elec_demand_hourly)
+    old_price_elec = calc.price_kwh(elec_mix_old,tech_data,elec_demand_hourly)
     old_price_gas = calc.price_kwh(heat_tech, tech_data, heat_demand_hourly)
 
-    new_price_elec = calc.price_kwh(elec_mix, tech_data, new_elec_demand)
+    new_price_elec = calc.price_kwh(elec_mix_old, tech_data, new_elec_demand)
     new_price_gas  = calc.price_kwh(heat_tech, tech_data, new_gas_demand[0])
     old_price_energy = old_price_elec + old_price_gas
     new_price_energy  = new_price_gas + new_price_elec
 
     ## Savings in €
-    price_diff = np.subtract(old_price_energy, new_price_energy) /100 # positive means savings! 
+    price_diff = pd.DataFrame(np.subtract(old_price_energy, new_price_energy) /100, columns = ['price_diff']) # positive means savings! 
 
     #%% With CO2-Price
     old_price_co2 = old_co2 * co2_price_kg
@@ -171,7 +171,11 @@ def submit(submission):
     new_price_co2 = new_co2* co2_price_kg
     new_price_total = new_price_co2 + new_price_energy/100
 
-    total_diff = np.subtract(old_price_total, new_price_total)
+    total_diff = pd.DataFrame(np.subtract(old_price_total, new_price_total), columns= ['total_diff'])
 
-    return comp.sum(), total_diff.sum(), price_diff.sum()
+    #%% Output
+
+    df = pd.concat([comp, price_diff, total_diff], axis = 1)
+
+    return df
 # %%
