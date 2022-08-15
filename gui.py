@@ -63,26 +63,30 @@ try:
     GUI1 = st.checkbox('Visualisation')
 
     if GUI1:
-        submission = {
-            'year': year,
-            # 'number_household':number_household,
-            'annual_elec_demand':annual_elec_demand,
-            'annual_heat_demand':annual_heat_demand,
-            'slp_type_heat':slp_type_heat,
-            'slp_type_elec': slp_type_elec,
-            'lat':lat,
-            'lon':lon,
-            'province':province,
-            'elec_mix_old':elec_mix_old,
-            'heat_tech_old':heat_tech_old,
-            'heat_system':heat_system,
-            'co2_price_sim':co2_price_sim,
-            'pv_area':pv_area,
-            'heat_pump':heat_pump,
-            'st_collector':st_collector,
-            'st_area':st_area,
-            # 'hub_height': hub_height
-        }
+        # submission = {
+        #     'year': year,
+        #     # 'number_household':number_household,
+        #     'annual_elec_demand':annual_elec_demand,
+        #     'annual_heat_demand':annual_heat_demand,
+        #     'slp_type_heat':slp_type_heat,
+        #     'slp_type_elec': slp_type_elec,
+        #     'lat':lat,
+        #     'lon':lon,
+        #     'province':province,
+        #     'elec_mix_old':elec_mix_old,
+        #     'heat_tech_old':heat_tech_old,
+        #     'heat_system':heat_system,
+        #     'co2_price_sim':co2_price_sim,
+        #     'pv_area':pv_area,
+        #     'heat_pump':heat_pump,
+        #     'st_collector':st_collector,
+        #     'st_area':st_area,
+        #     # 'hub_height': hub_height
+        # }
+        submission = [year, annual_elec_demand, annual_heat_demand, 
+                        slp_type_heat, slp_type_elec, lat, lon, province,
+                        elec_mix_old, heat_tech_old, heat_system, co2_price_sim,
+                        pv_area, heat_pump, st_collector, st_area]
         
         #st.write(submission)
         df = main_submit.submit(submission)

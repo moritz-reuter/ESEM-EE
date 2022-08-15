@@ -20,26 +20,44 @@ data = '/Users/mreuter/Documents/GitHub/ESEM----EE/data.xlsx'
 ###########################'
 
 def submit(submission):
-    year                    = submission['year']
-    # number_household        = submission['number_household'] # --> is this important?
-    annual_elec_demand      = submission['annual_elec_demand']  # kWh
-    annual_heat_demand      = submission['annual_heat_demand'] # kWh
-    slp_type_heat           = submission['slp_type_heat'] # MFH
-    slp_type_elec           = submission['slp_type_elec']  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
-    lat                     = submission['lat']
-    lon                     = submission['lon']
-    province                = submission['province'] #see list of provinces in XL
-    elec_mix_old            = submission['elec_mix_old']
-    heat_tech               = submission['heat_tech_old'] # read in from list of heat_techs
-    heat_system             = submission['heat_system']
-    co2_price_sim           = submission['co2_price_sim'] # €/tCO2 --> write function to determine price per kg for sim selection
+    # year                    = submission['year']
+    # # number_household        = submission['number_household'] # --> is this important?
+    # annual_elec_demand      = submission['annual_elec_demand']  # kWh
+    # annual_heat_demand      = submission['annual_heat_demand'] # kWh
+    # slp_type_heat           = submission['slp_type_heat'] # MFH
+    # slp_type_elec           = submission['slp_type_elec']  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
+    # lat                     = submission['lat']
+    # lon                     = submission['lon']
+    # province                = submission['province'] #see list of provinces in XL
+    # elec_mix_old            = submission['elec_mix_old']
+    # heat_tech               = submission['heat_tech_old'] # read in from list of heat_techs
+    # heat_system             = submission['heat_system']
+    # co2_price_sim           = submission['co2_price_sim'] # €/tCO2 --> write function to determine price per kg for sim selection
 
-    pv_area                 = submission['pv_area'] # m2
-    heat_pump               = submission['heat_pump'] # HP_ground, HP_water
-    st_collector            = submission['st_collector']
-    st_area                 = submission['st_area']
+    # pv_area                 = submission['pv_area'] # m2
+    # heat_pump               = submission['heat_pump'] # HP_ground, HP_water
+    # st_collector            = submission['st_collector']
+    # st_area                 = submission['st_area']
     # hub_height              = submission['hub_height']
+    
+    year                    = submission[0]
+    # number_household        = submission['number_household'] # --> is this important?
+    annual_elec_demand      = submission[1]  # kWh
+    annual_heat_demand      = submission[2] # kWh
+    slp_type_heat           = submission[3] # MFH
+    slp_type_elec           = submission[4]  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
+    lat                     = submission[5]
+    lon                     = submission[6]
+    province                = submission[7] #see list of provinces in XL
+    elec_mix_old            = submission[8]
+    heat_tech               = submission[9] # read in from list of heat_techs
+    heat_system             = submission[10]
+    co2_price_sim           = submission[11] # €/tCO2 --> write function to determine price per kg for sim selection
 
+    pv_area                 = submission[12] # m2
+    heat_pump               = submission[13] # HP_ground, HP_water
+    st_collector            = submission[14]
+    st_area                 = submission[15]
     ###############################################
     ###############################################
     co2_price = calc.co2_price(co2_price_sim, data)
