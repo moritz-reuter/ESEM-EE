@@ -6,36 +6,52 @@ import numpy as np
 
 #%% Heating system - temperatures
 def heating_params(heat_system, heat_pump, weather):
+
+    T_i = []
+    T_o = []
+    quality_grd = 0
+
+    ###############################################
+
     if heat_system == 'HKS':
-        T_out = [60]*len(weather)
+        T_o = [60]
     else: 
-        T_out = [40]*len(weather)
+        T_o = [40]
+
+    ##############################################
 
     if heat_pump == 'HP_air':
-        T_in = weather['temp_air']
-        quality_grade = 0.4
-        # temp_threshold_icing = 2
+        T_i = pd.Series(weather['temp_air'].values)
+        quality_grd = 0.4
+        
     elif heat_pump == 'HP_ground':
-        T_in = [12]*len(weather)
-        quality_grade = 0.55
-    elif heat_pump == 'HP_water':
-        T_in = [10]*len(weather)
-        quality_grade = 0.5
+        T_i = pd.Series([12]*len(weather))
+        quality_grd = 0.55
 
-    return T_in, T_out, quality_grade # temp_threshold_icing
+    elif heat_pump == 'HP_water':
+        T_i = pd.Series([10]*len(weather))
+        quality_grd = 0.5
+
+
+    return T_i, T_o, quality_grd # temp_threshold_icing
 
 # %% Heatpump - Electricity demand via COP
-def heat_pump_el(T_in, T_out, heat_demand, quality_grade): # set temp_threshold_icing as exogenous!
+# def heat_pump_el(T_source, T_sink, heat_demand, quality_grade): # set temp_threshold_icing as exogenous!
 
-    cop = therm.compression_heatpumps_and_chillers.calc_cops(mode = 'heat_pump',
-                          temp_high = T_out,
-                          temp_low = T_in,
-                          quality_grade = quality_grade,
-                          temp_threshold_icing = 2, # assumption!
-                          factor_icing = 0.95 #assumption
-                            )
-    el_hp = heat_demand / cop #--make sure both are arrays!
-    return el_hp, np.array(cop)
+#     cop = therm.compression_heatpumps_and_chillers.calc_cops(
+#                         mode = "heat_pump",
+#                         temp_high = T_sink,
+#                         temp_low = T_source,
+#                         quality_grade = quality_grade
+#                         #   temp_threshold_icing = 2, # assumption!
+#                         #   factor_icing = 0.95 #assumption
+#                         )
+                        
+#     cop = [x if x > 0 else 5 for x in cop]
+#     cop = [x if x < 5 else 5 for x in cop]
+    
+#     el_hp = heat_demand / cop #--make sure both are arrays!
+#     return el_hp, np.array(cop)
 
 # %% Solar thermal collector - not concentrated (Heat Feed-in)
 

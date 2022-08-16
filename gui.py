@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
+import datetime as dt
 
 import helper_functions
 import main_submit
-from thermal_fn import soltherm_heat
+
 
 ###########################
 data = '/Users/mreuter/Documents/GitHub/ESEM----EE/data.xlsx'
@@ -30,9 +31,9 @@ st_tech_options     = helper_functions.sheet_xl(data, 'soltherm_data').index.to_
 
 #%%
 #GUI
-try:
+with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
-        col1, col2, col3, col4 = st.columns(4)
+        col1,col2 = st.columns(2)
         year                = col1.number_input(label='Jahr auswählen', step=1, min_value=2010, max_value=2021, value=2019, key='year')
         # number_household    = col1.number_input(label='Anzahl der Personen im Haushalt', step=1, min_value=1, max_value=10, value=2,key='occupants')     
         
@@ -46,7 +47,8 @@ try:
         lon                 = col2.number_input(label='Längengrad', step=1., value=13.41, key='lon')
         st.write('Der aktuelle Längengrad ist: ', lon)
         province            = col2.selectbox(label='"Bundesland" (Abk.)', options = prov_options,key='province', index = 3)    #see list of provinces in XL
-
+        
+        col3, col4 = st.columns(2)
         elec_mix_old        = col3.selectbox(label='Stromtarif - Aktuell', options = elec_mix_options, key='elec_mix_old', index = 1) 
         heat_tech_old       = col3.selectbox(label='Heizungstechnnologie - Aktuell', options = heat_tech_options, key='heat_tech_old', index = 0) #'CHB' # read in from list of heat_techs
         heat_system         = col3.selectbox(label='Heizungssystem (zur Berechnung der Heizungsvorlauftemperatur)', options = heat_system_options, key='heat_system', index = 0) #'HKS'
@@ -57,26 +59,67 @@ try:
         st_collector        = col4.selectbox(label='Solarthermie Technologie (Nicht-konzentriert)', options = st_tech_options, key='st_collector', index = 0) 
         st_area             = col4.number_input(label='Solarthermie-Anlagenfläche', step=1., value=10., key='st_area') # 10 # m2
         # hub_height          = col1.number_input(label='Windkraftanlage - Nabenhöhe', step=1., value=15., key='hub_height') # 10 # m2
-        # col3, col4 = st.columns(2)
 
+        col5, col6 = st.columns(2)
+        location = pd.DataFrame(np.array([[float(lat), float(lon)]]), columns=['lat', 'lon'])
+        loc = col5.map(location)
+
+        
         submit1 = st.form_submit_button('Log Input Variables')
 
-    GUI1 = st.checkbox('Visualisation')
+GUI1 = st.checkbox('Start Simulation')
+if GUI1:
+        
+    # submission = [year, annual_elec_demand, annual_heat_demand, 
+    #                 slp_type_elec, slp_type_heat, lat, lon, province,
+    #                 elec_mix_old, heat_tech_old, heat_system, co2_price_sim,
+    #                 pv_area, heat_pump, st_collector, st_area]
 
-    if GUI1:
+    submission = {
+        'year': year,
+        'annual_elec_demand':annual_elec_demand,
+        'annual_heat_demand':annual_heat_demand,
+        'slp_type_heat':slp_type_heat,
+        'slp_type_elec': slp_type_elec,
+        'lat':lat,
+        'lon':lon,
+        'province':province,
+        'elec_mix_old':elec_mix_old,
+        'heat_tech_old':heat_tech_old,
+        'heat_system':heat_system,
+        'co2_price_sim':co2_price_sim,
+        'pv_area':pv_area,
+        'heat_pump':heat_pump,
+        'st_collector':st_collector,
+        'st_area':st_area,
+    }
         
-        submission = [year, annual_elec_demand, annual_heat_demand, 
-                        slp_type_elec, slp_type_heat, lat, lon, province,
-                        elec_mix_old, heat_tech_old, heat_system, co2_price_sim,
-                        pv_area, heat_pump, st_collector, st_area]
-        
-        #st.write(submission)
-        df = main_submit.submit(submission)
-        # --> main.submit function for running simulation with given user variables
-        # --> if main.submit returns df --> makes plot easy!
-        
-        ''' Plotting'''
-        st.table(df)
+    #st.write(submission)
+    df = main_submit.submit(submission)
+    # --> main.submit function for running simulation with given user variables
+    # --> if main.submit returns df --> makes plot easy!
+    
+    ''' Plotting'''
+    with st.expander('Visualisation Settings', expanded = True):
+       with st.form('Form2'):
+            col1, col2 = st.columns(2)
+            start_date = col1.date_input('Start Datum', df.iat[0, 0], min_value=df.iat[0, 0], max_value=df.iat[-1, 0])
+            start_time = col1.slider('Start Uhrzeit', step=1, min_value=0, max_value=23, value=0)
+            end_date = col2.date_input('End Datum', df.iat[-1, 0], min_value=df.iat[0, 0], max_value=df.iat[-1, 0])
+            end_time = col2.slider('End Uhrzeit', step=1, min_value=0, max_value=23, value=23)
+
+            submit2 = st.form_submit_button('Log Visualisation Settings')
+
+    if submit2:
+        start_time = str(start_time)+':00:00'
+        start_time = dt.datetime.strptime(start_time, '%H:%M:%S')
+        start_time = start_time.replace(year=start_date.year, month=start_date.month, day=start_date.day)
+
+        end_time = str(end_time) + ':00:00'
+        end_time = dt.datetime.strptime(end_time, '%H:%M:%S')
+        end_time = end_time.replace(year=end_date.year, month=end_date.month, day=end_date.day)
+
+
         # with st.form('Show Results of Visualisation'):
             
         #     fig = px.line(
@@ -86,8 +129,5 @@ try:
         #     fig.update_traces(line_color="maroon")
         #     st.plotly_chart(fig)
         #     submit2 = st.form_submit_button('')
-
-except NameError:
-    st.error("Error! Not all input statements were chosen.")
 
 # %%

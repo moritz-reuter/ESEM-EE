@@ -24,9 +24,8 @@ data = 'data.xlsx'
 
 #%% Streamlit user info
 year                    = 2019
-number_household        = 2 # --> is this important?
 annual_elec_demand      = 1500  # kWh
-annual_heat_demand      = 15000 # kWh
+annual_heat_demand      = 6000 # kWh
 slp_type_heat           = 'EFH' # MFH
 slp_type_elec           = 'h0'  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
 lat                     = 52.52

@@ -20,44 +20,43 @@ data = '/Users/mreuter/Documents/GitHub/ESEM----EE/data.xlsx'
 ###########################'
 
 def submit(submission):
-    # year                    = submission['year']
-    # # number_household        = submission['number_household'] # --> is this important?
-    # annual_elec_demand      = submission['annual_elec_demand']  # kWh
-    # annual_heat_demand      = submission['annual_heat_demand'] # kWh
-    # slp_type_heat           = submission['slp_type_heat'] # MFH
-    # slp_type_elec           = submission['slp_type_elec']  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
-    # lat                     = submission['lat']
-    # lon                     = submission['lon']
-    # province                = submission['province'] #see list of provinces in XL
-    # elec_mix_old            = submission['elec_mix_old']
-    # heat_tech               = submission['heat_tech_old'] # read in from list of heat_techs
-    # heat_system             = submission['heat_system']
-    # co2_price_sim           = submission['co2_price_sim'] # €/tCO2 --> write function to determine price per kg for sim selection
+    year                    = submission['year']
+    annual_elec_demand      = submission['annual_elec_demand']  # kWh
+    annual_heat_demand      = submission['annual_heat_demand'] # kWh
+    slp_type_heat           = submission['slp_type_heat'] # MFH
+    slp_type_elec           = submission['slp_type_elec']  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
+    lat                     = submission['lat']
+    lon                     = submission['lon']
+    province                = submission['province'] #see list of provinces in XL
+    elec_mix_old            = submission['elec_mix_old']
+    heat_tech               = submission['heat_tech_old'] # read in from list of heat_techs
+    heat_system             = submission['heat_system']
+    co2_price_sim           = submission['co2_price_sim'] # €/tCO2 --> write function to determine price per kg for sim selection
 
-    # pv_area                 = submission['pv_area'] # m2
-    # heat_pump               = submission['heat_pump'] # HP_ground, HP_water
-    # st_collector            = submission['st_collector']
-    # st_area                 = submission['st_area']
+    pv_area                 = submission['pv_area'] # m2
+    heat_pump               = submission['heat_pump'] # HP_ground, HP_water
+    st_collector            = submission['st_collector']
+    st_area                 = submission['st_area']
     # hub_height              = submission['hub_height']
     
-    year                    = submission[0]
+    # year                    = submission[0]
     # number_household        = submission['number_household'] # --> is this important?
-    annual_elec_demand      = submission[1]  # kWh
-    annual_heat_demand      = submission[2] # kWh
-    slp_type_elec           = submission[3]  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
-    slp_type_heat           = submission[4] # MFH
-    lat                     = submission[5]
-    lon                     = submission[6]
-    province                = submission[7] #see list of provinces in XL
-    elec_mix_old            = submission[8]
-    heat_tech               = submission[9] # read in from list of heat_techs
-    heat_system             = submission[10]
-    co2_price_sim           = submission[11] # €/tCO2 --> write function to determine price per kg for sim selection
+    # annual_elec_demand      = submission[1]  # kWh
+    # annual_heat_demand      = submission[2] # kWh
+    # slp_type_elec           = submission[3]  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
+    # slp_type_heat           = submission[4] # MFH
+    # lat                     = submission[5]
+    # lon                     = submission[6]
+    # province                = submission[7] #see list of provinces in XL
+    # elec_mix_old            = submission[8]
+    # heat_tech               = submission[9] # read in from list of heat_techs
+    # heat_system             = submission[10]
+    # co2_price_sim           = submission[11] # €/tCO2 --> write function to determine price per kg for sim selection
 
-    pv_area                 = submission[12] # m2
-    heat_pump               = submission[13] # HP_ground, HP_water
-    st_collector            = submission[14]
-    st_area                 = submission[15]
+    # pv_area                 = submission[12] # m2
+    # heat_pump               = submission[13] # HP_ground, HP_water
+    # st_collector            = submission[14]
+    # st_area                 = submission[15]
     ###############################################
     ###############################################
     co2_price = calc.co2_price(co2_price_sim, data)
@@ -100,7 +99,12 @@ def submit(submission):
     wind_elec           = pd.DataFrame([0]*len(pv_elec), index= time_index_year)
 
     ##########      Heat        #################################
+    
+    T_in, T_out, quality_grade_hp = thermal_fn.heating_params(heat_system, heat_pump, weather_hourly)
+
     #%% Solar thermal - Heat feedin
+
+
     soltherm_data = helper_functions.sheet_xl(data, 'soltherm_data')
 
     st_feedin_spec  = thermal_fn.soltherm_heat(st_collector, lat, lon, soltherm_data, weather_hourly, time_index_year) / 1000
@@ -110,9 +114,6 @@ def submit(submission):
     '''
     heat_pump_el returns the electrical demand kWh of a heat pump that satisfies the hourly heat demand given by the gas slp profile
     '''
-
-    T_in, T_out, quality_grade_hp = thermal_fn.heating_params(heat_system, heat_pump, weather_hourly)
-
     heat_demand_renewable = heat_demand_hourly - st_feedin['collectors_heat']
 
     '''
@@ -120,7 +121,16 @@ def submit(submission):
     Units (and dimensions) are derived from the input paramater heat_demand_renewable, which calculates the excess heat_demand after factoring 
     in the heat energy that is provided through a solar thermal (roof) 
     '''
-    heat_pump_el, cop = thermal_fn.heat_pump_el(T_in, T_out, heat_demand_renewable, quality_grade_hp)
+    cop = therm.compression_heatpumps_and_chillers.calc_cops(
+                        mode = "heat_pump",
+                        temp_high = T_in,
+                        temp_low = T_out,
+                        quality_grade = quality_grade_hp)
+                        
+    cop = [x if x > 0 else 5 for x in cop]
+    cop = [x if x < 5 else 5 for x in cop]
+
+    heat_pump_el = heat_demand_renewable / cop
 
     # jaz = heat_demand_hourly.sum() / heat_pump_el.sum()
 
