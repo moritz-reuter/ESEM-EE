@@ -44,8 +44,8 @@ def submit(submission):
     # number_household        = submission['number_household'] # --> is this important?
     annual_elec_demand      = submission[1]  # kWh
     annual_heat_demand      = submission[2] # kWh
-    slp_type_heat           = submission[3] # MFH
-    slp_type_elec           = submission[4]  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
+    slp_type_elec           = submission[3]  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
+    slp_type_heat           = submission[4] # MFH
     lat                     = submission[5]
     lon                     = submission[6]
     province                = submission[7] #see list of provinces in XL
