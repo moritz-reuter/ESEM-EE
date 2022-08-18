@@ -60,8 +60,7 @@ keyring==23.7.0
 keyrings.alt==4.1.1
 kiwisolver==1.4.4
 korean-lunar-calendar==0.2.1
-libpq-dev
-locket==1.0.0
+libpq-dev==9.4.3
 Mako==1.2.1
 MarkupSafe==2.1.1
 matplotlib==3.5.2
