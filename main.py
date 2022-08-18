@@ -30,7 +30,7 @@ slp_type_heat           = 'EFH' # MFH
 slp_type_elec           = 'h0'  # --> write function to determine elec_slp based on heat_slp (only household implementation) 
 lat                     = 52.52
 lon                     = 13.4050
-province                = 'SH' #see list of provinces in XL
+province                = 'BE' #see list of provinces in XL
 elec_mix                = 'G_DE'
 heat_tech               = 'CHB' # read in from list of heat_techs
 heat_system             = 'HKS'
@@ -40,15 +40,12 @@ pv_area                 = 10 # m2
 heat_pump               = 'HP_air' # HP_ground, HP_water
 st_collector            = 'tube'
 st_area                 = 10
-hub_height              = 15
 
 ###############################################
 co2_price = calc.co2_price(co2_price_sim, data)
 
 #%% Weather
 weather_hourly          = weather_fn.tmy_data(lat, lon)
-wind_hourly             = weather_hourly[['wind_speed', 'pressure']].rename_axis(None, axis=0)
-wind_hourly.columns     = pd.MultiIndex.from_product([wind_hourly.columns, [hub_height]])
 
 # pv_hourly = weather_fn.era5_weather(lat, lon, year, 'pvlib')
 # wind_hourly = weather_fn.era5_weather(lat, lon, year, 'windpowerlib')
@@ -104,8 +101,9 @@ heat_pump_el calculates the (additional) hourly electricity demand stemming from
 Units (and dimensions) are derived from the input paramater heat_demand_renewable, which calculates the excess heat_demand after factoring 
 in the heat energy that is provided through a solar thermal (roof) 
 '''
-heat_pump_el, cop = thermal_fn.heat_pump_el(T_in, T_out, heat_demand_renewable, quality_grade_hp)
+cop = thermal_fn.calc_cops('heat_pump', T_out, T_in, quality_grade_hp)
 
+heat_pump_el = heat_demand_renewable / cop
 # jaz = heat_demand_hourly.sum() / heat_pump_el.sum()
 
 

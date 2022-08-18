@@ -70,29 +70,29 @@ with st.expander('Simulationsvariablen', expanded=True):
 GUI1 = st.checkbox('Start Simulation')
 if GUI1:
         
-    # submission = [year, annual_elec_demand, annual_heat_demand, 
-    #                 slp_type_elec, slp_type_heat, lat, lon, province,
-    #                 elec_mix_old, heat_tech_old, heat_system, co2_price_sim,
-    #                 pv_area, heat_pump, st_collector, st_area]
+    submission = [year, annual_elec_demand, annual_heat_demand, 
+                    slp_type_elec, slp_type_heat, lat, lon, province,
+                    elec_mix_old, heat_tech_old, heat_system, co2_price_sim,
+                    pv_area, heat_pump, st_collector, st_area]
 
-    submission = {
-        'year': year,
-        'annual_elec_demand':annual_elec_demand,
-        'annual_heat_demand':annual_heat_demand,
-        'slp_type_heat':slp_type_heat,
-        'slp_type_elec': slp_type_elec,
-        'lat':lat,
-        'lon':lon,
-        'province':province,
-        'elec_mix_old':elec_mix_old,
-        'heat_tech_old':heat_tech_old,
-        'heat_system':heat_system,
-        'co2_price_sim':co2_price_sim,
-        'pv_area':pv_area,
-        'heat_pump':heat_pump,
-        'st_collector':st_collector,
-        'st_area':st_area,
-    }
+    # submission = {
+    #     'year': year,
+    #     'annual_elec_demand':annual_elec_demand,
+    #     'annual_heat_demand':annual_heat_demand,
+    #     'slp_type_heat':slp_type_heat,
+    #     'slp_type_elec': slp_type_elec,
+    #     'lat':lat,
+    #     'lon':lon,
+    #     'province':province,
+    #     'elec_mix_old':elec_mix_old,
+    #     'heat_tech_old':heat_tech_old,
+    #     'heat_system':heat_system,
+    #     'co2_price_sim':co2_price_sim,
+    #     'pv_area':pv_area,
+    #     'heat_pump':heat_pump,
+    #     'st_collector':st_collector,
+    #     'st_area':st_area,
+    # }
         
     #st.write(submission)
     df = main_submit.submit(submission)
