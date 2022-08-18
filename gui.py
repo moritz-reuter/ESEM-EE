@@ -34,7 +34,7 @@ st_tech_options     = helper_functions.sheet_xl(data, 'soltherm_data').index.to_
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
         col1,col2 = st.columns(2)
-        year                = col1.number_input(label='Jahr auswählen', step=1, min_value=2010, max_value=2021, value=2019, key='year')
+        year                = col1.number_input(label='Jahr auswählen', step=1, min_value=2010, max_value=2022, value=2019, key='year')
         # number_household    = col1.number_input(label='Anzahl der Personen im Haushalt', step=1, min_value=1, max_value=10, value=2,key='occupants')     
         
         annual_elec_demand  = col1.number_input(label='Stromnachfrage (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=1500,key='annual_elec_demand')       
@@ -96,6 +96,9 @@ if GUI1:
         
     #st.write(submission)
     df = main_submit.submit(submission)
+    df = df.reset_index()
+    df['index'] = df['index'].astype(str, errors='raise')
+    df['index'] = df['index'].apply(lambda x: dt.datetime.strptime(x, '%Y-%m-%d %H:%M:%S'))
     # --> main.submit function for running simulation with given user variables
     # --> if main.submit returns df --> makes plot easy!
     
@@ -119,15 +122,64 @@ if GUI1:
         end_time = dt.datetime.strptime(end_time, '%H:%M:%S')
         end_time = end_time.replace(year=end_date.year, month=end_date.month, day=end_date.day)
 
+        mask = (df['index'] >= start_time) & (df['index'] <= end_time)
+        df = df[mask]
+        
+        with st.container():
+            with st.expander('Visualisierung: Kompensation', expanded=False):
+                fig = go.Figure(data=[go.Scatter(
+                    x=df['index'], y=df['comp'], mode='lines')])
+                fig.update_layout(
+                    xaxis=dict(
+                        rangeselector=dict(
+                            buttons=list([
+                                dict(count=1,
+                                     step="day",
+                                     stepmode="backward"),
+                            ])
+                        ),
+                        rangeslider=dict(
+                            visible=True
+                        ),
+                    )
+                )
+                st.plotly_chart(fig)
 
-        # with st.form('Show Results of Visualisation'):
-            
-        #     fig = px.line(
-        #         df, x = df.index, y = df[:, 0], title = 'Compensation'
-        #     )
+            with st.expander('Visualisierung: Preise (Differenz)', expanded=False):
+                fig = go.Figure(data=[go.Scatter(
+                    x=df['index'], y=df['price_diff'], mode='lines')])
+                fig.update_layout(
+                    xaxis=dict(
+                        rangeselector=dict(
+                            buttons=list([
+                                dict(count=1,
+                                     step="day",
+                                     stepmode="backward"),
+                            ])
+                        ),
+                        rangeslider=dict(
+                            visible=True
+                        ),
+                    )
+                )
+                st.plotly_chart(fig)
 
-        #     fig.update_traces(line_color="maroon")
-        #     st.plotly_chart(fig)
-        #     submit2 = st.form_submit_button('')
-
+            with st.expander('Visualisierung: Preise (Differenz inkl. CO2-Preis)', expanded=False):
+                fig = go.Figure(data=[go.Scatter(
+                    x=df['index'], y=df['total_diff'], mode='lines', name='total_diff')])
+                fig.update_layout(
+                    xaxis=dict(
+                        rangeselector=dict(
+                            buttons=list([
+                                dict(count=1,
+                                     step="day",
+                                     stepmode="backward"),
+                            ])
+                        ),
+                        rangeslider=dict(
+                            visible=True
+                        ),
+                    )
+                )
+                st.plotly_chart(fig)
 # %%

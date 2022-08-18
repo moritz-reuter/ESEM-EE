@@ -121,15 +121,15 @@ def submit(submission):
     Units (and dimensions) are derived from the input paramater heat_demand_renewable, which calculates the excess heat_demand after factoring 
     in the heat energy that is provided through a solar thermal (roof) 
     '''
-    cop = therm.compression_heatpumps_and_chillers.calc_cops(
-                        mode = "heat_pump",
-                        temp_high = T_in,
-                        temp_low = T_out,
-                        quality_grade = quality_grade_hp)
+    # cop = therm.compression_heatpumps_and_chillers.calc_cops(
+    #                     mode = "heat_pump",
+    #                     temp_high = T_in,
+    #                     temp_low = T_out,
+    #                     quality_grade = quality_grade_hp)
                         
-    cop = [x if x > 0 else 5 for x in cop]
-    cop = [x if x < 5 else 5 for x in cop]
-
+    # cop = [x if x > 0 else 5 for x in cop]
+    # cop = [x if x < 5 else 5 for x in cop]
+    cop = 2.6
     heat_pump_el = heat_demand_renewable / cop
 
     # jaz = heat_demand_hourly.sum() / heat_pump_el.sum()
