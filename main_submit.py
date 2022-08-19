@@ -15,7 +15,7 @@ import feedin_fn
 import calc
 
 ###########################
-data = '/Users/mreuter/Documents/GitHub/ESEM----EE/data.xlsx'
+data = 'data.xlsx'
 ###########################'
 
 def submit(submission):

@@ -12,7 +12,7 @@ import main_submit
 
 
 ###########################
-data = '/Users/mreuter/Documents/GitHub/ESEM----EE/data.xlsx'
+data = 'data.xlsx'
 ###########################
 
 #%%
