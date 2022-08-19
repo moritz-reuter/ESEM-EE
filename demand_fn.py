@@ -7,7 +7,7 @@ import pandas as pd
 import datetime
 
 ## Data - Filepath ##
-data = '/Users/mreuter/Documents/GitHub/ESEM----EE/data.xlsx'
+data = 'data.xlsx'
 
 ##% Function - ElecSlp
 def elec_slp(year, province, sector, ann_demand):
