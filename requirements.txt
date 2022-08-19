@@ -1,3 +1,4 @@
+pip==22.2.2
 setuptools
 wheel
 alembic==1.8.1
