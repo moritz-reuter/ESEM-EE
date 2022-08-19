@@ -102,7 +102,7 @@ prometheus-client==0.14.1
 prompt-toolkit==3.0.30
 protobuf==3.20.1
 psutil==5.9.1
-psycopg2==2.8.5
+psycopg2-binary==2.8.5
 ptyprocess==0.7.0
 pvlib==0.9.1
 pyarrow==8.0.0
