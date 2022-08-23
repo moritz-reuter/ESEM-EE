@@ -1,6 +1,4 @@
 #%%
-from ossaudiodev import SNDCTL_COPR_RDATA
-from .demand_fn import elec_slp
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
