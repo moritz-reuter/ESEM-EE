@@ -220,5 +220,8 @@ if GUI1:
                 st.plotly_chart(fig)
             
             with st.expander('Ergebnisse: Zusammenfassung (für den gewählten Zeitraum)', expanded = False):
-                st.table(df.sum(axis = 0))
+                df.columns = ['Kompensation', 'Kosten', 'Kosten (inkl. CO2-Preis)']
+                df_results = df.sum(axis = 0)
+                df_results.columns = ['Summierte Werte (für den ausgewählten Zeitraum)']
+                st.table(df_results)
 # %%
