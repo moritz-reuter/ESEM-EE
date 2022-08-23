@@ -1,5 +1,6 @@
 #%%
 from ossaudiodev import SNDCTL_COPR_RDATA
+from .demand_fn import elec_slp
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,14 +20,18 @@ data = 'data.xlsx'
 #%%
 # Options #######################################
 tech_data           = helper_functions.sheet_xl(data, 'tech')
-elec_slp_options    = helper_functions.sheet_xl(data, 'elec_slp')['name'].to_list()
-heat_slp_options    = helper_functions.sheet_xl(data, 'heat_slp')['name'].to_list()
+elec_slp_data       = helper_functions.sheet_xl(data, 'elec_slp')
+elec_slp_options    = elec_slp_data['name'].to_list()
+heat_slp_data       = helper_functions.sheet_xl(data, 'heat_slp')
+heat_slp_options    = heat_slp_data['name'].to_list()
 
-prov_options        = helper_functions.sheet_xl(data, 'provinces')['value'].to_list()
+prov_data           = helper_functions.sheet_xl(data, 'provinces')
+prov_options        = prov_data['value'].to_list()
 elec_mix_options    = tech_data[tech_data.index.str.contains('G_')]['name'].to_list()
 heat_tech_options   = tech_data[tech_data['energy'] == 'heat']['name'].to_list()
 heat_system_options = ['Fußbodenheizung', 'Heizkörpersystem'] #make flexible via 
-co2_price_options   = helper_functions.sheet_xl(data, 'co2')['name'].to_list()
+co2_data            = helper_functions.sheet_xl(data, 'co2')
+co2_price_options   = co2_data['name'].to_list()
 heat_pump_options   = tech_data[tech_data.index.str.contains('HP_')]['name'].to_list()
 # st_tech_options     = helper_functions.sheet_xl(data, 'soltherm_data')['name'].to_list()
 soltherm_data       = helper_functions.sheet_xl(data, 'soltherm_data')
@@ -35,36 +40,40 @@ st_tech_options     = ['Vakuumröhrenkollektor', 'Flachkollektor']
 #GUI
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
-        col1,col2 = st.columns(2)
-        year                    = col1.number_input(label='Jahr auswählen', step=1, min_value=2010, max_value=2022, value=2019, key='year')
-        # number_household    = col1.number_input(label='Anzahl der Personen im Haushalt', step=1, min_value=1, max_value=10, value=2,key='occupants')     
+        col1,col2,col3, col4 = st.columns(3)
+        with col1:
+            st.header('Basis Informationen')
+            year                    = st.number_input(label='Jahr auswählen', step=1, min_value=2010, max_value=2022, value=2019, key='year')
+            # number_household    = col1.number_input(label='Anzahl der Personen im Haushalt', step=1, min_value=1, max_value=10, value=2,key='occupants')     
+            lat                     = st.number_input(label='Breitengrad', step=1., value=52.52, key='lat')
+            # st.write('Der aktuelle Breitengrad ist: ', lat)
+            lon                     = st.number_input(label='Längengrad', step=1., value=13.41, key='lon')
+            # st.write('Der aktuelle Längengrad ist: ', lon)
+            province                = st.selectbox(label='"Bundesland" (Abk.)', options = prov_options,key='province', index = 3)    #see list of provinces in XL
+            location = pd.DataFrame(np.array([[float(lat), float(lon)]]), columns=['lat', 'lon'])
+            loc = st.map(location)
         
-        annual_elec_demand      = col1.number_input(label='Stromnachfrage (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=1500,key='annual_elec_demand')       
-        annual_heat_demand      = col1.number_input(label='Gas (Wärme) Nachfrage (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=6000,key='annual_heat_demand')       
-        slp_type_elec_st        = col1.selectbox(label='Standardlastprofil Strom (i.e., privat or geschäftlich)', options = elec_slp_options, key='slp_type_elec', index = 7)   
-        slp_type_heat_st        = col1.selectbox(label='Standardlastprofil Gas (i.e., privat or geschäftlich)', options = heat_slp_options, key='slp_type_heat', index = 0)  
+        with col2:
+            st.header('Verbraucher Informationen')
+            annual_elec_demand      = st.number_input(label='Stromnachfrage (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=1500,key='annual_elec_demand')       
+            annual_heat_demand      = st.number_input(label='Gas (Wärme) Nachfrage (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=6000,key='annual_heat_demand')       
+            slp_type_elec_st        = st.selectbox(label='Standardlastprofil Strom (i.e., privat or geschäftlich)', options = elec_slp_options, key='slp_type_elec', index = 7)   
+            slp_type_heat_st        = st.selectbox(label='Standardlastprofil Gas (i.e., privat or geschäftlich)', options = heat_slp_options, key='slp_type_heat', index = 0)  
         
-        lat                     = col2.number_input(label='Breitengrad', step=1., value=52.52, key='lat')
-        st.write('Der aktuelle Breitengrad ist: ', lat)
-        lon                     = col2.number_input(label='Längengrad', step=1., value=13.41, key='lon')
-        st.write('Der aktuelle Längengrad ist: ', lon)
-        province                = col2.selectbox(label='"Bundesland" (Abk.)', options = prov_options,key='province', index = 3)    #see list of provinces in XL
-        
-        col3, col4 = st.columns(2)
-        elec_mix_old_st         = col3.selectbox(label='Stromtarif - Aktuell', options = elec_mix_options, key='elec_mix_old', index = 1) 
-        heat_tech_old_st        = col3.selectbox(label='Heizungstechnnologie - Aktuell', options = heat_tech_options, key='heat_tech_old', index = 0) #'CHB' # read in from list of heat_techs
-        heat_system_st          = col3.selectbox(label='Heizungssystem (zur Berechnung der Heizungsvorlauftemperatur)', options = heat_system_options, key='heat_system', index = 0) #'HKS'
-        co2_price_sim_st        = col3.selectbox(label='CO2-Reduktionspfad', options = co2_price_options, key='co2_price_sim', index = 0)# 'BAU' # €/tCO2 --> write function to determine price per kg for sim selection
+        with col3:
+            st.header('Aktuelle Heiz- und Stromtechnologien')
+            elec_mix_old_st         = st.selectbox(label='Stromtarif - Aktuell', options = elec_mix_options, key='elec_mix_old', index = 1) 
+            heat_tech_old_st        = st.selectbox(label='Heizungstechnnologie - Aktuell', options = heat_tech_options, key='heat_tech_old', index = 0) #'CHB' # read in from list of heat_techs
+            heat_system_st          = st.selectbox(label='Heizungssystem (zur Berechnung der Heizungsvorlauftemperatur)', options = heat_system_options, key='heat_system', index = 0) #'HKS'
+        with col4:
+            st.header('Zukunftsgerichtete Technologien und CO2-Preis-Szenarien')
+            pv_area                 = st.number_input(label='PV-Anlagenfläche', step=1., value=10., key='pv_area') # 10 # m2
+            heat_pump_st            = st.selectbox(label='Wärmepumpe', options = heat_pump_options, key='heat_pump',index = 0) #'HP_air' # HP_ground, HP_water
+            st_collector_st         = st.selectbox(label='Solarthermie Technologie (Nicht-konzentriert)', options = st_tech_options, key='st_collector', index = 0) 
+            st_area                 = st.number_input(label='Solarthermie-Anlagenfläche', step=1., value=10., key='st_area') # 10 # m2
+            co2_price_sim_st        = st.selectbox(label='CO2-Reduktionspfad', options = co2_price_options, key='co2_price_sim', index = 0)# 'BAU' # €/tCO2 --> write function to determine price per kg for sim selection
 
-        pv_area                 = col4.number_input(label='PV-Anlagenfläche', step=1., value=10., key='pv_area') # 10 # m2
-        heat_pump_st            = col4.selectbox(label='Wärmepumpe', options = heat_pump_options, key='heat_pump',index = 0) #'HP_air' # HP_ground, HP_water
-        st_collector_st         = col4.selectbox(label='Solarthermie Technologie (Nicht-konzentriert)', options = st_tech_options, key='st_collector', index = 0) 
-        st_area                 = col4.number_input(label='Solarthermie-Anlagenfläche', step=1., value=10., key='st_area') # 10 # m2
-        # hub_height          = col1.number_input(label='Windkraftanlage - Nabenhöhe', step=1., value=15., key='hub_height') # 10 # m2
 
-        col5, col6 = st.columns(2)
-        location = pd.DataFrame(np.array([[float(lat), float(lon)]]), columns=['lat', 'lon'])
-        loc = col5.map(location)
 
         
         submit1 = st.form_submit_button('Log Input Variables')
