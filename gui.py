@@ -27,7 +27,8 @@ prov_data           = helper_functions.sheet_xl(data, 'provinces')
 prov_options        = prov_data['value'].to_list()
 elec_mix_options    = tech_data[tech_data.index.str.contains('G_')]['name'].to_list()
 heat_tech_options   = tech_data[tech_data['energy'] == 'heat']['name'].to_list()
-heat_system_options = ['Fußbodenheizung', 'Heizkörpersystem'] #make flexible via 
+heat_system_data    = helper_functions.sheet_xl(data, 'heat_system')
+heat_system_options = heat_system_data['name'].to_list() #make flexible via 
 co2_data            = helper_functions.sheet_xl(data, 'co2')
 co2_price_options   = co2_data['name'].to_list()
 heat_pump_options   = tech_data[tech_data.index.str.contains('HP_')]['name'].to_list()
