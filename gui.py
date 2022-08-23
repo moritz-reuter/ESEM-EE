@@ -220,5 +220,5 @@ if GUI1:
                 st.plotly_chart(fig)
             
             with st.expander('Ergebnisse: Zusammenfassung (für den gewählten Zeitraum)', expanded = False):
-                st.table(df.sum(axis = 1))
+                st.table(df.sum(axis = 0))
 # %%
