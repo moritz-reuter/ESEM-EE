@@ -78,7 +78,7 @@ with st.expander('Simulationsvariablen', expanded=True):
 
 with st.expander('Bedienungsanleitung'):
     st.header('Informationen zum bedienen des Tools')
-    st.download_button(label = 'Bedienungsanleitung', data = None, file_name = 'Programmbeschreibung.pdf')
+    st.download_button(label = 'Bedienungsanleitung', data = 'packages.txt', file_name = 'Programmbeschreibung.pdf')
 
 
 GUI1 = st.checkbox('Start Simulation')
