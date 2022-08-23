@@ -38,17 +38,17 @@ st_tech_options     = ['Vakuumröhrenkollektor', 'Flachkollektor']
 #GUI
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
-        tab1,tab2,tab3, tab4 = st.tabs(['Basis Info', 'Verbraucher Info', 'Aktuelle Tech.', 'Zukunfts-Tech'])
+        tab1,tab2,tab3, tab4, tab5 = st.tabs(['Basis Info', 'Verbraucher Info', 'Aktuelle Tech.', 'Zukunfts-Tech', 'Bedienungsanleitung'])
         
         with tab1:
             st.header('Basis Informationen')
-            year                    = st.number_input(label='Jahr auswählen', step=1, min_value=2010, max_value=2022, value=2019, key='year')
+            year                    = st.number_input(label='Jahr auswählen', step=1, min_value=2010, max_value=2022, value=2022, key='year')
             # number_household    = col1.number_input(label='Anzahl der Personen im Haushalt', step=1, min_value=1, max_value=10, value=2,key='occupants')     
             lat                     = st.number_input(label='Breitengrad', step=1., value=52.52, key='lat')
             # st.write('Der aktuelle Breitengrad ist: ', lat)
             lon                     = st.number_input(label='Längengrad', step=1., value=13.41, key='lon')
             # st.write('Der aktuelle Längengrad ist: ', lon)
-            province                = st.selectbox(label='"Bundesland" (Abk.)', options = prov_options,key='province', index = 3)    #see list of provinces in XL
+            province                = st.selectbox(label='Bundesland', options = prov_options,key='province', index = 3)    #see list of provinces in XL
             location = pd.DataFrame(np.array([[float(lat), float(lon)]]), columns=['lat', 'lon'])
             loc = st.map(location)
         
@@ -73,20 +73,23 @@ with st.expander('Simulationsvariablen', expanded=True):
             st_area                 = st.number_input(label='Solarthermie-Anlagenfläche', step=1., value=10., key='st_area') # 10 # m2
             co2_price_sim_st        = st.selectbox(label='CO2-Reduktionspfad', options = co2_price_options, key='co2_price_sim', index = 0)# 'BAU' # €/tCO2 --> write function to determine price per kg for sim selection
 
+        with tab5:
+            st.header('Informationen zum bedienen des Tools')
+            st.download_button(label = 'Bedienungsanleitung', data = None, file_name = 'Programmbeschreibung.pdf')
 
         submit1 = st.form_submit_button('Log Input Variables')
 
 GUI1 = st.checkbox('Start Simulation')
 
 if GUI1:
-    slp_type_elec   = slp_type_elec_st
-    slp_type_heat   = slp_type_heat_st
-    elec_mix_old    = elec_mix_old_st
-    heat_tech_old   = heat_tech_old_st
-    heat_system     = heat_system_st
-    co2_price_sim   = co2_price_sim_st
-    heat_pump       = heat_pump_st
-    st_collector    = st_collector_st
+    slp_type_elec   = elec_slp_data.index[elec_slp_data['name'] == slp_type_elec_st]
+    slp_type_heat   = heat_slp_data.index[heat_slp_data['name'] == slp_type_heat_st]
+    elec_mix_old    = tech_data.index[tech_data['name'] == elec_mix_old_st]
+    heat_tech_old   = tech_data.index[tech_data['name'] == heat_tech_old_st]
+    heat_system     = tech_data.index[tech_data['name'] == heat_system_st]
+    co2_price_sim   = co2_data.index[co2_data['name'] == co2_price_sim_st]
+    heat_pump       = tech_data.index[tech_data['name'] == heat_pump_st]
+    st_collector    = soltherm_data.index[soltherm_data['name'] == st_collector_st]
         
     submission = [year, annual_elec_demand, annual_heat_demand, 
                     slp_type_elec, slp_type_heat, lat, lon, province,
