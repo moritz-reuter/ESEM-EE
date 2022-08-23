@@ -38,7 +38,7 @@ st_tech_options     = ['Vakuumröhrenkollektor', 'Flachkollektor']
 #GUI
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
-        tab1,tab2,tab3, tab4, tab5 = st.tabs(['Basis Info', 'Verbraucher Info', 'Aktuelle Tech.', 'Zukunfts-Tech', 'Bedienungsanleitung'])
+        tab1,tab2,tab3, tab4 = st.tabs(['Basis Info', 'Verbraucher Info', 'Aktuelle Tech.', 'Zukunfts-Tech'])
         
         with tab1:
             st.header('Basis Informationen')
@@ -75,10 +75,10 @@ with st.expander('Simulationsvariablen', expanded=True):
 
         
         submit1 = st.form_submit_button('Log Input Variables')
-        
-        with tab5:
-            st.header('Informationen zum bedienen des Tools')
-            st.download_button(label = 'Bedienungsanleitung', data = None, file_name = 'Programmbeschreibung.pdf')
+
+with st.expander('Bedienungsanleitung'):
+    st.header('Informationen zum bedienen des Tools')
+    st.download_button(label = 'Bedienungsanleitung', data = None, file_name = 'Programmbeschreibung.pdf')
 
 
 GUI1 = st.checkbox('Start Simulation')
