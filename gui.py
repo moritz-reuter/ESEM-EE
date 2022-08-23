@@ -73,11 +73,13 @@ with st.expander('Simulationsvariablen', expanded=True):
             st_area                 = st.number_input(label='Solarthermie-Anlagenfläche', step=1., value=10., key='st_area') # 10 # m2
             co2_price_sim_st        = st.selectbox(label='CO2-Reduktionspfad', options = co2_price_options, key='co2_price_sim', index = 0)# 'BAU' # €/tCO2 --> write function to determine price per kg for sim selection
 
+        
+        submit1 = st.form_submit_button('Log Input Variables')
+        
         with tab5:
             st.header('Informationen zum bedienen des Tools')
             st.download_button(label = 'Bedienungsanleitung', data = None, file_name = 'Programmbeschreibung.pdf')
 
-        submit1 = st.form_submit_button('Log Input Variables')
 
 GUI1 = st.checkbox('Start Simulation')
 
