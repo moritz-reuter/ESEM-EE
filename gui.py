@@ -170,7 +170,7 @@ if GUI1:
                             visible=True
                         ),
                     ),
-                    yaxis_title = "Kompensiertes CO2 (in kg)"
+                    yaxis_title = "Kompensiertes CO2 (in kg)",
                     xaxis_title = "Zeit"
                 )
                 st.plotly_chart(fig)
@@ -191,7 +191,7 @@ if GUI1:
                             visible=True
                         ),
                     ),
-                    yaxis_title = "Eingesparte- (pos.) oder Mehr- (neg.) -Kosten (in €)"
+                    yaxis_title = "Eingesparte- (pos.) oder Mehr- (neg.) -Kosten (in €)",
                     xaxis_title = "Zeit"
                 )
                 st.plotly_chart(fig)
@@ -212,7 +212,7 @@ if GUI1:
                             visible=True
                         ),
                     ),
-                    yaxis_title = "Eingesparte- (pos.) oder Mehr- (neg.) -Kosten (in €)"
+                    yaxis_title = "Eingesparte- (pos.) oder Mehr- (neg.) -Kosten (in €)",
                     xaxis_title = "Zeit"
                 )
                 st.plotly_chart(fig)
