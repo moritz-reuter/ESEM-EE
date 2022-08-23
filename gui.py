@@ -84,7 +84,7 @@ with st.expander('Bedienungsanleitung'):
     st.download_button(label = 'Bedienungsanleitung', data = 'bedienungsanleitung.txt', file_name = 'Programmbeschreibung.txt')
 
 
-GUI1 = st.checkbox('Start Simulation')
+GUI1 = st.checkbox('Simulation beginnnen')
 
 if GUI1:
     slp_type_elec   = elec_slp_data.index[elec_slp_data['name'] == slp_type_elec_st][0]
@@ -130,7 +130,7 @@ if GUI1:
     # --> if main.submit returns df --> makes plot easy!
     
     #Plotting#
-    st.header('Plotting')
+    st.header('Ergebnisse')
     with st.expander('Visualisation Settings', expanded = True):
        with st.form('Form2'):
             col1, col2 = st.columns(2)
@@ -169,7 +169,9 @@ if GUI1:
                         rangeslider=dict(
                             visible=True
                         ),
-                    )
+                    ),
+                    yaxis_title = "Kompensiertes CO2 (in kg)"
+                    xaxis_title = "Zeit"
                 )
                 st.plotly_chart(fig)
 
@@ -188,7 +190,9 @@ if GUI1:
                         rangeslider=dict(
                             visible=True
                         ),
-                    )
+                    ),
+                    yaxis_title = "Eingesparte- (pos.) oder Mehr- (neg.) -Kosten (in €)"
+                    xaxis_title = "Zeit"
                 )
                 st.plotly_chart(fig)
 
@@ -207,7 +211,9 @@ if GUI1:
                         rangeslider=dict(
                             visible=True
                         ),
-                    )
+                    ),
+                    yaxis_title = "Eingesparte- (pos.) oder Mehr- (neg.) -Kosten (in €)"
+                    xaxis_title = "Zeit"
                 )
                 st.plotly_chart(fig)
 # %%
