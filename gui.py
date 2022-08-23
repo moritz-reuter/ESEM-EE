@@ -90,7 +90,7 @@ if GUI1:
     slp_type_heat   = heat_slp_data.index[heat_slp_data['name'] == slp_type_heat_st][0]
     elec_mix_old    = tech_data.index[tech_data['name'] == elec_mix_old_st][0]
     heat_tech_old   = tech_data.index[tech_data['name'] == heat_tech_old_st][0]
-    heat_system     = tech_data.index[tech_data['name'] == heat_system_st][0]
+    heat_system     = heat_system_data.index[heat_system_data['name'] == heat_system_st][0]
     co2_price_sim   = co2_data.index[co2_data['name'] == co2_price_sim_st][0]
     heat_pump       = tech_data.index[tech_data['name'] == heat_pump_st][0]
     st_collector    = soltherm_data.index[soltherm_data['name'] == st_collector_st][0]
