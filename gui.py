@@ -38,9 +38,9 @@ st_tech_options     = ['Vakuumröhrenkollektor', 'Flachkollektor']
 #GUI
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
-        col1,col2,col3, col4 = st.columns(4)
+        tab1,tab2,tab3, tab4 = st.tabs(['Basis Info', 'Verbraucher Info', 'Aktuelle Tech.', 'Zukunfts-Tech'])
         
-        with col1:
+        with tab1:
             st.header('Basis Informationen')
             year                    = st.number_input(label='Jahr auswählen', step=1, min_value=2010, max_value=2022, value=2019, key='year')
             # number_household    = col1.number_input(label='Anzahl der Personen im Haushalt', step=1, min_value=1, max_value=10, value=2,key='occupants')     
@@ -52,20 +52,20 @@ with st.expander('Simulationsvariablen', expanded=True):
             location = pd.DataFrame(np.array([[float(lat), float(lon)]]), columns=['lat', 'lon'])
             loc = st.map(location)
         
-        with col2:
+        with tab2:
             st.header('Verbraucher Informationen')
             annual_elec_demand      = st.number_input(label='Stromnachfrage (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=1500,key='annual_elec_demand')       
             annual_heat_demand      = st.number_input(label='Gas (Wärme) Nachfrage (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=6000,key='annual_heat_demand')       
             slp_type_elec_st        = st.selectbox(label='Standardlastprofil Strom (i.e., privat or geschäftlich)', options = elec_slp_options, key='slp_type_elec', index = 7)   
             slp_type_heat_st        = st.selectbox(label='Standardlastprofil Gas (i.e., privat or geschäftlich)', options = heat_slp_options, key='slp_type_heat', index = 0)  
         
-        with col3:
+        with tab3:
             st.header('Aktuelle Heiz- und Stromtechnologien')
             elec_mix_old_st         = st.selectbox(label='Stromtarif - Aktuell', options = elec_mix_options, key='elec_mix_old', index = 1) 
             heat_tech_old_st        = st.selectbox(label='Heizungstechnnologie - Aktuell', options = heat_tech_options, key='heat_tech_old', index = 0) #'CHB' # read in from list of heat_techs
             heat_system_st          = st.selectbox(label='Heizungssystem (zur Berechnung der Heizungsvorlauftemperatur)', options = heat_system_options, key='heat_system', index = 0) #'HKS'
         
-        with col4:
+        with tab4:
             st.header('Zukunftsgerichtete Technologien und CO2-Preis-Szenarien')
             pv_area                 = st.number_input(label='PV-Anlagenfläche', step=1., value=10., key='pv_area') # 10 # m2
             heat_pump_st            = st.selectbox(label='Wärmepumpe', options = heat_pump_options, key='heat_pump',index = 0) #'HP_air' # HP_ground, HP_water
