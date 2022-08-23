@@ -37,6 +37,7 @@ soltherm_data       = helper_functions.sheet_xl(data, 'soltherm_data')
 st_tech_options     = ['Vakuumröhrenkollektor', 'Flachkollektor']
 #%%
 #GUI
+st.header('CO2-Kompensationstool')
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
         tab1,tab2,tab3, tab4 = st.tabs(['Basis Info', 'Verbraucher Info', 'Aktuelle Tech.', 'Zukunfts Tech.'])
@@ -128,7 +129,8 @@ if GUI1:
     # --> main.submit function for running simulation with given user variables
     # --> if main.submit returns df --> makes plot easy!
     
-    ''' Plotting'''
+    #Plotting#
+    st.header('Plotting')
     with st.expander('Visualisation Settings', expanded = True):
        with st.form('Form2'):
             col1, col2 = st.columns(2)
