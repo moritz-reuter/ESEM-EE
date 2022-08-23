@@ -1,7 +1,0 @@
-name: eses-ee
-channels:
-  - defaults
-dependencies:
-  - libpq-dev
-  - pip:
-    - 
