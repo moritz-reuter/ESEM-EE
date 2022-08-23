@@ -55,8 +55,8 @@ with st.expander('Simulationsvariablen', expanded=True):
         
         with tab2:
             st.header('Verbraucher Informationen')
-            annual_elec_demand      = st.number_input(label='Stromnachfrage (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=1500,key='annual_elec_demand')       
-            annual_heat_demand      = st.number_input(label='Gas (Wärme) Nachfrage (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=6000,key='annual_heat_demand')       
+            annual_elec_demand      = st.number_input(label='Stromverbrauch (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=1500,key='annual_elec_demand')       
+            annual_heat_demand      = st.number_input(label='Gasverbrauch (Raumwärem, Warmwasser) (jährlich, kWh)', step=100, min_value=1, max_value=100000, value=6000,key='annual_heat_demand')       
             slp_type_elec_st        = st.selectbox(label='Standardlastprofil Strom (i.e., privat or geschäftlich)', options = elec_slp_options, key='slp_type_elec', index = 7)   
             slp_type_heat_st        = st.selectbox(label='Standardlastprofil Gas (i.e., privat or geschäftlich)', options = heat_slp_options, key='slp_type_heat', index = 0)  
         
