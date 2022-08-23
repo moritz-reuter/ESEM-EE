@@ -38,7 +38,8 @@ st_tech_options     = ['Vakuumröhrenkollektor', 'Flachkollektor']
 #GUI
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
-        col1,col2,col3, col4 = st.columns(3)
+        col1,col2,col3, col4 = st.columns(4)
+        
         with col1:
             st.header('Basis Informationen')
             year                    = st.number_input(label='Jahr auswählen', step=1, min_value=2010, max_value=2022, value=2019, key='year')
@@ -63,6 +64,7 @@ with st.expander('Simulationsvariablen', expanded=True):
             elec_mix_old_st         = st.selectbox(label='Stromtarif - Aktuell', options = elec_mix_options, key='elec_mix_old', index = 1) 
             heat_tech_old_st        = st.selectbox(label='Heizungstechnnologie - Aktuell', options = heat_tech_options, key='heat_tech_old', index = 0) #'CHB' # read in from list of heat_techs
             heat_system_st          = st.selectbox(label='Heizungssystem (zur Berechnung der Heizungsvorlauftemperatur)', options = heat_system_options, key='heat_system', index = 0) #'HKS'
+        
         with col4:
             st.header('Zukunftsgerichtete Technologien und CO2-Preis-Szenarien')
             pv_area                 = st.number_input(label='PV-Anlagenfläche', step=1., value=10., key='pv_area') # 10 # m2
@@ -72,11 +74,10 @@ with st.expander('Simulationsvariablen', expanded=True):
             co2_price_sim_st        = st.selectbox(label='CO2-Reduktionspfad', options = co2_price_options, key='co2_price_sim', index = 0)# 'BAU' # €/tCO2 --> write function to determine price per kg for sim selection
 
 
-
-        
         submit1 = st.form_submit_button('Log Input Variables')
 
 GUI1 = st.checkbox('Start Simulation')
+
 if GUI1:
     slp_type_elec   = slp_type_elec_st
     slp_type_heat   = slp_type_heat_st
