@@ -154,7 +154,7 @@ if GUI1:
 
         mask = (df['index'] >= start_time) & (df['index'] <= end_time)
         df = df[mask]
-        df.columns = ['Index','Kompensation', 'Kosten', 'Kosten (inkl. CO2-Preis)']
+        df.columns = ['index','Kompensation', 'Kosten', 'Kosten (inkl. CO2-Preis)']
 
         with st.container():
             with st.expander('Visualisierung: Kompensation', expanded=False):
