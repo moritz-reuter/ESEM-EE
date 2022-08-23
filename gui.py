@@ -38,6 +38,14 @@ st_tech_options     = ['Vakuumröhrenkollektor', 'Flachkollektor']
 #%%
 #GUI
 st.header('CO2-Kompensationstool')
+
+with st.expander('Bedienungsanleitung'):
+    st.header('Informationen zum bedienen des Tools')
+    # text_contents = 'Bedienungsanleitung'
+    st.write()
+    # st.download_button(label = 'Bedienungsanleitung', data = 'bedienungsanleitung.txt', file_name = 'Programmbeschreibung.txt')
+
+
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
         tab1,tab2,tab3, tab4 = st.tabs(['Basis Info', 'Verbraucher Info', 'Aktuelle Tech.', 'Zukunfts Tech.'])
@@ -77,12 +85,6 @@ with st.expander('Simulationsvariablen', expanded=True):
 
         
         submit1 = st.form_submit_button('Log Input Variables')
-
-with st.expander('Bedienungsanleitung'):
-    st.header('Informationen zum bedienen des Tools')
-    # text_contents = 'Bedienungsanleitung'
-    st.download_button(label = 'Bedienungsanleitung', data = 'bedienungsanleitung.txt', file_name = 'Programmbeschreibung.txt')
-
 
 GUI1 = st.checkbox('Simulation beginnnen')
 
@@ -175,7 +177,7 @@ if GUI1:
                 )
                 st.plotly_chart(fig)
 
-            with st.expander('Visualisierung: Preise (Differenz)', expanded=False):
+            with st.expander('Visualisierung: Kosten', expanded=False):
                 fig = go.Figure(data=[go.Scatter(
                     x=df['index'], y=df['price_diff'], mode='lines')])
                 fig.update_layout(
@@ -191,12 +193,12 @@ if GUI1:
                             visible=True
                         ),
                     ),
-                    yaxis_title = "Eingesparte- (pos.) oder Mehr- (neg.) -Kosten (in €)",
+                    yaxis_title = "Eingesparte Kosten (pos.) oder Mehrkosten (neg.) (in €)",
                     xaxis_title = "Zeit"
                 )
                 st.plotly_chart(fig)
 
-            with st.expander('Visualisierung: Preise (Differenz inkl. CO2-Preis)', expanded=False):
+            with st.expander('Visualisierung: Kosten (inkl. CO2-Preis)', expanded=False):
                 fig = go.Figure(data=[go.Scatter(
                     x=df['index'], y=df['total_diff'], mode='lines', name='total_diff')])
                 fig.update_layout(
@@ -212,8 +214,11 @@ if GUI1:
                             visible=True
                         ),
                     ),
-                    yaxis_title = "Eingesparte- (pos.) oder Mehr- (neg.) -Kosten (in €)",
+                    yaxis_title = "Eingesparte Kosten (pos.) oder Mehrkosten (neg.) (in €)",
                     xaxis_title = "Zeit"
                 )
                 st.plotly_chart(fig)
+            
+            with st.expander('Ergebnisse: Zusammenfassung (für den gewählten Zeitraum)', expanded = False):
+                st.table(df.sum(axis = 1))
 # %%
