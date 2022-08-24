@@ -37,12 +37,23 @@ soltherm_data       = helper_functions.sheet_xl(data, 'soltherm_data')
 st_tech_options     = ['Vakuumröhrenkollektor', 'Flachkollektor']
 #%%
 #GUI
-st.header('CO2-Kompensationstool')
+st.title('CO2-Kompensationstool')
 
 with st.expander('Bedienungsanleitung'):
     st.header('Informationen zum bedienen des Tools')
     # text_contents = 'Bedienungsanleitung'
-    st.write()
+    st.markdown(
+        '''
+        #Allgemeine Information (Funktionsweise)
+        \n Das Konzept dieses Tools ist simpel: anhand der von Ihnen eingegebenen Parametern bzgl. ihres derzeitigen Strom- und Wärmebedarfs und der von Ihnen denkbaren potentiale für den Einsatz erneuerbarer Energien auf ihrem Standort,
+        wird die CO2-Einsparung berechnet. Das wichtige an diesem Tool, ist dass es diese eingesparte Menge abhängig davon macht, zu welchen Zeiten PV-erzeugter Strom oder Solarthermie-erzeugte Wärme ihren real-time Bedarf deckt - ohne den Einsatz von Speichern.
+        Viele Haushalte in Deutschland haben noch keinen Wärme oder Stromspeicher und deshalb ist dieser Aspekt wichtig um einen realitätsnahen Bezug herzustellen.
+        #Wichtige Annahmen
+        \n Konstante Wärmepumpen Leistungszahl (aufgrund von Fehlerhaften Einbindung der Luftwärmepumpen Berechnung),
+        Temperatur und Strahlungswerte sind die eines typischen Meteorologischen Jahres
+        '''
+        
+    )
     # st.download_button(label = 'Bedienungsanleitung', data = 'bedienungsanleitung.txt', file_name = 'Programmbeschreibung.txt')
 
 
