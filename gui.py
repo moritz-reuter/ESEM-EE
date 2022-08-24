@@ -44,13 +44,17 @@ with st.expander('Bedienungsanleitung'):
     # text_contents = 'Bedienungsanleitung'
     st.markdown(
         '''
-        #Allgemeine Information (Funktionsweise)
+        *Allgemeine Information (Funktionsweise)*
+        ======
         \n Das Konzept dieses Tools ist simpel: anhand der von Ihnen eingegebenen Parametern bzgl. ihres derzeitigen Strom- und Wärmebedarfs und der von Ihnen denkbaren potentiale für den Einsatz erneuerbarer Energien auf ihrem Standort,
-        wird die CO2-Einsparung berechnet. Das wichtige an diesem Tool, ist dass es diese eingesparte Menge abhängig davon macht, zu welchen Zeiten PV-erzeugter Strom oder Solarthermie-erzeugte Wärme ihren real-time Bedarf deckt - ohne den Einsatz von Speichern.
+        wird die CO2-Einsparung berechnet. 
+        \n Das wichtige an diesem Tool, ist dass es diese eingesparte Menge abhängig davon macht, zu welchen Zeiten PV-erzeugter Strom oder Solarthermie-erzeugte Wärme ihren real-time Bedarf deckt - ohne den Einsatz von Speichern.
         Viele Haushalte in Deutschland haben noch keinen Wärme oder Stromspeicher und deshalb ist dieser Aspekt wichtig um einen realitätsnahen Bezug herzustellen.
-        #Wichtige Annahmen
-        \n Konstante Wärmepumpen Leistungszahl (aufgrund von Fehlerhaften Einbindung der Luftwärmepumpen Berechnung),
-        Temperatur und Strahlungswerte sind die eines typischen Meteorologischen Jahres
+        
+        *Wichtige Annahmen*
+        ========
+        - Konstante Wärmepumpen Leistungszahl (aufgrund von Fehlerhaften Einbindung der Luftwärmepumpen Berechnung),
+        - Temperatur und Strahlungswerte sind die eines typischen Meteorologischen Jahres
         '''
         
     )
