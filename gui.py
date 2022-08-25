@@ -43,17 +43,17 @@ st.title('CO2-Kompensationstool')
 
 with st.expander('Programmbeschreibung'):
     st.header('Informationen zum bedienen des Tools')
-    program_text = open('Programmbeschreibung_ESEM.txt', 'r')
-    st.write(program_text.read())
-
-with st.expander("Download Programmbeschreibung"):
+    st.write('''
+                Hier finden Sie alle wichtigen Informationen zum Bedienen des Tools als auch dessen Annahmen und Empfehlungen für die Weiterentwicklung. Viel Spaß!
+                ''')
     with open("Programmbeschreibung.pdf", "rb") as instruct_pdf:
         PDFbyte = instruct_pdf.read()
     st.download_button(label       = 'Programmbeschreibung', 
                         data        = PDFbyte,
-                        file_name   = 'instruct.pdf'
-                        )
-
+                        file_name   = 'instruct.pdf')
+                        
+                    
+                    
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
         tab1,tab2,tab3, tab4 = st.tabs(['Basis Info', 'Verbraucher Info', 'Aktuelle Tech.', 'Zukunfts Tech.'])
