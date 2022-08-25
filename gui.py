@@ -1,4 +1,5 @@
 #%%
+import mimetypes
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -40,11 +41,18 @@ st_tech_options     = ['Vakuumröhrenkollektor', 'Flachkollektor']
 #GUI
 st.title('CO2-Kompensationstool')
 
-with st.expander('Bedienungsanleitung'):
+with st.expander('Programmbeschreibung'):
     st.header('Informationen zum bedienen des Tools')
     program_text = open('Programmbeschreibung_ESEM.txt', 'r')
     st.write(program_text.read())
 
+with st.expander("Download Programmbeschreibung"):
+    with open("Programmbeschreibung.pdf", "rb") as instruct_pdf:
+        PDFbyte = instruct_pdf.read()
+    st.download_buttton(label       = 'Programmbeschreibung', 
+                        data        = PDFbyte,
+                        file_name   = 'instruct.pdf'
+                        )
 
 with st.expander('Simulationsvariablen', expanded=True):
     with st.form('Submit'):
