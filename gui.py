@@ -43,7 +43,7 @@ st.title('CO2-Kompensationstool')
 with st.expander('Bedienungsanleitung'):
     st.header('Informationen zum bedienen des Tools')
     program_text = open('Programmbeschreibung_ESEM.txt', 'r')
-    st.text(program_text.read())
+    st.write(program_text.read())
 
 
 with st.expander('Simulationsvariablen', expanded=True):
