@@ -49,7 +49,7 @@ with st.expander('Programmbeschreibung'):
 with st.expander("Download Programmbeschreibung"):
     with open("Programmbeschreibung.pdf", "rb") as instruct_pdf:
         PDFbyte = instruct_pdf.read()
-    st.download_buttton(label       = 'Programmbeschreibung', 
+    st.download_button(label       = 'Programmbeschreibung', 
                         data        = PDFbyte,
                         file_name   = 'instruct.pdf'
                         )
