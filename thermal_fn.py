@@ -4,6 +4,37 @@ import oemof.thermal as therm
 import pandas as pd
 import numpy as np
 
+# %% Solar thermal collector - not concentrated (Heat Feed-in)
+
+def soltherm_heat(collector, lat, lon, stconfig_df, weather, timeindex):
+    
+    # collectors = stconfig_df.index
+
+    # soltherm_feedin = dict.fromkeys(collectors)
+
+    #%% Fill
+    # for i in collectors:
+    i = collector
+    soltherm_feedin = therm.solar_thermal_collector.flat_plate_precalc(
+            lat,
+            lon,
+            collector_tilt = stconfig_df.loc[i]['collector_tilt'],
+            collector_azimuth = stconfig_df.loc[i]['collector_azimuth'],
+            eta_0 = stconfig_df.loc[i]['eta_0'],
+            a_1 = stconfig_df.loc[i]['a_1'],
+            a_2 = stconfig_df.loc[i]['a_2'],
+            temp_collector_inlet = stconfig_df.loc[i]['temp_collector_inlet'],
+            delta_temp_n  = stconfig_df.loc[i]['delta_temp_n'],
+            irradiance_global = weather['ghi'],
+            irradiance_diffuse = weather['dhi'],
+            temp_amb = weather['temp_air']
+        ).reset_index(level=None,drop=True)
+
+    col_heat = pd.DataFrame(soltherm_feedin["collectors_heat"]).set_index(timeindex)
+
+    return col_heat
+
+
 #%% Heating system - temperatures
 def heating_params(heat_system, heat_pump, weather):
 
@@ -96,6 +127,7 @@ def calc_cops(mode, temp_high, temp_low, quality_grade):
     # convert unit to Kelvin.
     list_temp_high_K = []
     list_temp_low_K = []
+    cops = []
     
     # length = max([len(temp_high), len(temp_low)])
 
@@ -134,35 +166,6 @@ def calc_cops(mode, temp_high, temp_low, quality_grade):
 #     el_hp = heat_demand / cop #--make sure both are arrays!
 #     return el_hp
 
-# %% Solar thermal collector - not concentrated (Heat Feed-in)
-
-def soltherm_heat(collector, lat, lon, stconfig_df, weather, timeindex):
-    
-    # collectors = stconfig_df.index
-
-    # soltherm_feedin = dict.fromkeys(collectors)
-
-    #%% Fill
-    # for i in collectors:
-    i = collector
-    soltherm_feedin = therm.solar_thermal_collector.flat_plate_precalc(
-            lat,
-            lon,
-            collector_tilt = stconfig_df.loc[i]['collector_tilt'],
-            collector_azimuth = stconfig_df.loc[i]['collector_azimuth'],
-            eta_0 = stconfig_df.loc[i]['eta_0'],
-            a_1 = stconfig_df.loc[i]['a_1'],
-            a_2 = stconfig_df.loc[i]['a_2'],
-            temp_collector_inlet = stconfig_df.loc[i]['temp_collector_inlet'],
-            delta_temp_n  = stconfig_df.loc[i]['delta_temp_n'],
-            irradiance_global = weather['ghi'],
-            irradiance_diffuse = weather['dhi'],
-            temp_amb = weather['temp_air']
-        ).reset_index(level=None,drop=True)
-
-    col_heat = pd.DataFrame(soltherm_feedin["collectors_heat"]).set_index(timeindex)
-
-    return col_heat
 
 
 # %% Solar thermal collector - concentrated (Heat Feed-in)

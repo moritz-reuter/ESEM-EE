@@ -57,7 +57,8 @@ def submit(submission):
     ###############################################
 
     ###############################################
-    co2_price = calc.co2_price(co2_price_sim, data)
+    co2_price = calc.co2_price(co2_price_sim, data) # --> kg!
+    co2_price_kg = co2_price/1000 # €/kgCO2
 
     #%% Weather
     weather_hourly          = weather_fn.tmy_data(lat, lon)
@@ -131,8 +132,6 @@ def submit(submission):
 
     #%% ###### CO2 emissions ##############
 
-    co2_price_kg = co2_price/1000 # €/kgCO2
-
     #%% Electricity
     co2_old_elec = calc.co2_kwh(elec_mix_old, tech_data, elec_demand_hourly) /1000
 
@@ -188,10 +187,10 @@ def submit(submission):
 
     #%% With CO2-Price
     old_price_co2 = old_co2 * co2_price_kg
-    old_price_total = old_price_co2 + old_price_energy/100
+    old_price_total = np.add(old_price_co2,old_price_energy)/100
 
     new_price_co2 = new_co2* co2_price_kg
-    new_price_total = new_price_co2 + new_price_energy/100
+    new_price_total = np.add(new_price_co2,new_price_energy)/100
 
     total_diff = pd.DataFrame(np.subtract(old_price_total, new_price_total), columns = ['total_diff'])
 

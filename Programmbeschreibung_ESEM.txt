@@ -1,0 +1,70 @@
+Programmbeschreibung
+
+Eingabe:
+
+Nutzer*innen koennen ueber den Link zu einem Streamlit Programm geleitet werden, die ueber einen Cloud-Service gehostet wird. Streamlit ist ein Python Paket, dass Python Skripte ueber ein Browser-Fenster zugaenglich macht und Eingabe- als auch Visualisierungsmoeglichkeiten bietet.
+
+Die Nutzer*innen werden in der Webapp dazu aufgefordert saemtliche Eingaben zu machen, die zu der Berechnung der individuellen CO2-Kompensation genutzt werden koennen.
+
+Die wichtigsten Parameter sind:
+- Der jaehrliche Strom- (annual_elec_demand) und Waermebedarf (annual_heat_demand)
+- Der Standartlastprofil-Typ, i.e., ob die Nutzer*in in einem Einfamilien- (EFH) oder Mehrfamilienhaus (MFH) wohnt. In der Zukunft kann das Tool auch dazu eingesetzt werden CO2-Kompensation fuer ein Gewerbe zu berechnen, aber das ist derzeit nicht vorgesehen.
+- Die Koordination, i.e. Breitengrad (lat von Latitude) und Laengengrad (lon von Longitude) 
+- Das Bundesland (province), da das Tool derzeit fuer Deutsche Nutzer*innen ausgelegt ist)
+- Der �Strom-Mix� (elec_mix), i.e., der prozentuale Anteil von OEkostrom im individuellen Tarif, was zur Berechnung der CO2-Belastung pro kWh Strom eingesetzt wird.
+- Die eingesetzte Heiztechnologie (heat_tech), was zur Berechnung der CO2-Belastung pro kWh Waerme (bzw. Gas) eingesetzt wird.
+- Das Beheizungssystem (heat_system), also ob eine Fu�bodenheizung (FBH) oder ein Heizkoerpersystem (HKS) genutzt wird, was fuer die Berechnung der Vorlauftemperatur der Heizung eingesetzt wird und damit ausschlaggebend ist fuer die Heizungsleistung der Heiztechnologie.
+- Das Temperaturziel fuer die Auswahl des dazugehoerigen CO2-Preises (co2_price_sim)
+- Die Parameter zur Bestimmung der Potenziale fuer erneuerbare Energien:
+o Eine moegliche Photovoltaik Flaeche zur Stromerzeugung (pv_area)
+o Einer von drei moeglichen Waermepumpen Konfigurationen (heat_pump), die jeweils aus der Waermequelle und dem Waermetraegermittel bestimmt ist:
+* Luft-Wasser Waermepumpe (HP_Air)
+* Sole-Wasser Waermepumpe (HP_Ground)
+* Wasser-Wasser Waermepumpe (HP_Water)
+Jeder dieser Waermepumpen weist individuelle Effizienz- bzw. Verlustparameter auf.
+o Eine moegliche Kollektorflaeche zur Nutzung der Solarthermie (st_area) und der ausgewaehlte Kollektortyp (st_collector).
+o Die Nabenhoehe fuer eine kleine Windkraftanlage (hub_height), obwohl derzeit � aufgrund der schlechten Datenlage � keine Windenergienutzung vorgesehen ist.
+Programmablauf 
+(main_submit)
+
+1. Der CO2-Preis fuer die Berechnung. Dieser wird anhand des gewaehlten Temperaturziels initialisiert. Dies geschieht mittels der Funktion co2_price in der Datei calc.py.
+* Es stehen vier Szenarien zur Auswahl: BAU (business-as-usual), Paris1.5 und Paris2 (analog fuer die jeweiligen Temperaturziele, die in dem Paris-Vertrag festgelegt sind) und Neutral45 (was einem nationalen CO2-Preis entspricht, der mit einem Entwicklungspfad vereinbar ist auf dem Deutschland bis 2045 Klimaneutral sein wuerde.
+2. Die Wetterzeitreihen (weather_hourly). Wird mittels der Funktion tmy_data Wetterdaten fuer ein typisches meteorologisches Jahr (Abk..: tmy) abgerufen fuer den eingegebenen Standort
+3. Die Strom- und Waermebedarfszeitreihen fuer die jeweiligen eingegebenen jaehrlichen Nachfragewerte. Diese werden mit der elec_slp bzw. heat_slp Funktion berechnet, welche fuer das gewaehlte Simulationsjahr (year) der Nutzer*in auf das demandlib Paket zugreift. 
+* Der Index der erzeugten Lastgaenge werden unter time_index_year gespeichert, sodass andere Zeitreihen (insb. Einspeisezeitreihen) auf diesem zugreifen koennen. Das soll dazu dienen, dass spaeter die ausgegebenen Zeitreihen der Ergebnisse alle den gleichen Zeitraum abbilden.
+4. Die Einspeisezeitreihen der erneuerbaren Energien (Strom) � feedin_fn
+* Photovoltaik (PV) � pv_elec 
+o Es wird eine Konstellation aus einem �Silevo Triex� Modul mit einer 300 W Ausgangsleistung und einem �ABB Micro� Inverter mit Niederspannungsausgang (240 V) genutzt. Dieses Paar ist repraesentiert ein fortgeschrittenes Setup zur Stromerzeugung.
+o Die Ausrichtung (azimuth) ist exakt suedlich (180�) mit einer �idealen� 37,5� Neigung (tilt).
+o Es wird ein ac Modus gewaehlt, der die Verluste des Inverters miteinbezieht. Die Flaechenskalierung (area scaling) dient dazu die Erzeugung auf den Quadratmeter runterzurechnen, sodass die Gesamterzeugung durch Multiplikation mit der eingegebenen PV-Flaeche berechnet wird. Da die Ausgabe in Watt erfolgt, muss auf kW mittels einer 1000-Teilung umgerechnet werden. 
+o Empfehlung: Fuer Nutzer*innen die bereits eine PV-Anlage bei sich zuhause stehen haben, sollte man eine detailliertere Eingabe erlauben fuer Anlagen-spezifische Werte.
+* Wind ist derzeit nicht implementiert (daher wird nur ein 0-Vektor initialisiert) sollte aber in Zukunft (mit einer besseren Datenbasis) moeglich sein.
+o Wichtige �Infrastruktur� wie z.B. das Einlesen einer Leistungskurve und Leistungskoeffizienten Kennlinie sind bereits implementiert (siehe die Funktion wind_elec)
+o Empfehlung: Verlaessliche (und einfach abrufbare) Daten finden und einbauen!
+
+5. Die Einspeisezeitreihen der erneuerbaren Energien (Waerme) � thermal_fn
+* Solarthermie (st_feedin)
+o Die Berechnung der Solarthermie Waermeerzeugung erfolgt in der Funktion soltherm_heat. Durch die Nutzer*in wird festgelegt welcher Kollektortyp ausgewaehlt wird fuer die Erzeugung.
+o Es stehen zwei �repraesentative� Kollektortypen (fuer die nicht-konzentrierte Solarthermie) zur Auswahl: ein Vakuumroehrenkollektor und ein Flachkollektor. Die technischen Parameter (wie z.B. optischer Wirkungsgrad) sind in dem Excel Datenblatt soltherm_data zu finden.
+o Auch hier erfolgt eine Berechnung in Watt, die zu Kilowatt umgerechnet wird.
+* Waermepumpe
+o Wichtig: In diesem Tool wird die Annahme getroffen, dass Haushalte ihre CO2-intensiven existierenden Heiztechnologien (wie den Gaskessel oder die (noch) Gas-belastete Fernwaerme) komplett mit einer Waermepumpe ersetzen. Daher wird nicht die Waermeerzeugung der Waermepumpe berechnet, sondern der zusaetzliche Strombedarf, der entsteht, wenn die Waermepumpe die Waermenachfrage deckt, die nach der Einbindung der Solarthermie noch besteht. Hierzu wird die Leistungszahl (coefficient of performance, Abk.: COP) genutzt und das mathematische Verhaeltnis:
+P_el=Q_Heiz/COP
+o UEber die Wahl des Heizungssystems (Fu�bodenheizung FBH oder Heizkoerper HKS) wird die Vorlauftemperatur bestimmt (T_out), die ma�geblich ist fuer die Leistung der Waermepumpe. Sowohl die Temperatur der Waermequelle (T_in) als auch der Nutzungsgrad der Anlage (quality_grade) ist abhaengig von der gewaehlten Konfiguration (i.e. Luft-Wasser, Wasser-Wasser oder Sole-Wasser).
+o Letztendlich wird ueber das Verhaeltnis heat_demand_renewable (i.e. inkl. Solarthermie) geteilt durch cop, der elektrische Verbrauch der Waermepumpe berechnet (heat_pump_el)
+o Empfehlung: Aufgrund eines Fehlers bei der Funktion calc_cops kann derzeit nur eine konstante Leistungszahl angenommen werden, die einer 
+
+6. Die CO2-Emissionen
+* Die CO2-Emissionen werden allgemein mittels der co2_kWh berechnet (in dem calc.py Skript). Diese liest den Emissionsfaktor der Technologie aus dem Datenblatt ein und multipliziert den stuendlichen Verbrauch bzw. Erzeugung mit dem Emissionsfaktor
+* Es werden die �alten� Emissionen des Stromverbrauchs (co2_old_elec) mit den �neuen� (co2_new_elec) verglichen, um die Kompensation zu bestimmen.
+o Die �neuen� CO2-Emissionen setzen sich aus Emissionen zusammen, die durch die Stromerzeugung entstehen (ren_tech_co2, bezogen auf Life-Cycle-Assessment Werte) und die, die durch den Netzbezug entstehen, welches die Residuallast decken muss.
+* Die Residuallast ist die Differenz aus dem Strombedarf (inkl. Waermepumpenlast) und der Einspeisung aus den Erneuerbaren.
+* Aufgrund der getroffenen Annahmen zur Waermepumpe, wird der �neue� Gasverbrauch mit einem 0-Vektor initialisiert. Somit sind die einzigen CO2-Emissionen, die durch den Gaseinsatz entstehen, den �alten� Erzeugungstechnologien zuzuschreiben (co2_old_gas).
+* Die Kompensation wird berechnet, indem alle neuen und alten CO2-Werte summiert werden und die neuen von den alten abgezogen werden:
+comp=old-new
+Somit bedeutet ein negativer Wert, dass die �neue� Erzeugungskonstellation mehr CO2-Emissionen verursacht als vorher. Ein positiver Wert ist genau die Menge an CO2-Emissionen, welche eingespart (bzw. kompensiert) worden sind (in dem gegebenen Zeitraum).
+7. Die Ersparnisse bzw. die Mehr-Kosten
+* Analog zur Berechnung der CO2-Emissionen wird fuer jede Stunde, wurde eine price_kWh Funktion eingesetzt, die fuer die alten und neuen Strom- und Gasbedarfszeitreihen den Preis pro kWh berechnet, ohne CO2-Preis. Die Ersparnisse bzw. Mehrkosten werden in price_diff berechnet (genau wie die Kompensation auch)
+* total_diff berechnett dann die Ersparnisse bzw. Mehrkosten mit einem CO2-Preis.
+* Wichtig: Viele erwarten, dass besonders inkl. einem CO2-Preis, die Berechnung immer Gesamtersparnisse ausgibt. Das muss aber nicht zwingend der Fall sein. Z.B. wenn der Waermebedarf eines Haushalts immens ist, und dieser durch eine Waermepumpe gedeckt werden muss, kann der Stromtarif (und dessen CO2-Belastung) eine gro�e Auswirkung haben und Preise bzw. CO2-Emissionen in die Hoehe schie�en!
+* Empfehlung: Derzeit wird angenommen dass jeder Haushalt bei seinem �alten� Tarif bleibt. Stattdessen, sollte entweder die Option ermoeglicht werden auf einen OEkostrom Tarif zu wechseln (falls dieser noch nicht von der Nutzer*in gewaehlt wurde), oder einen �custom� Stromtarif festzulegen!
