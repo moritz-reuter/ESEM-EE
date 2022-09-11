@@ -86,11 +86,18 @@ with st.expander('Simulationsvariablen', expanded=True):
         
         with tab4:
             st.header('Zukunftsgerichtete Technologien und CO2-Preis-Szenarien')
+            st.info('Nutzen Sie gerne unsere Infos zu den unterschiedlichen EE auf unserer Website, um mehr über die technischen und wirtschaftliche Hintergründe der einzelnen Technologien zu erfahren', icon="ℹ️")
             pv_area                 = st.number_input(label='PV-Anlagenfläche', step=1., value=10., key='pv_area') # 10 # m2
             heat_pump_st            = st.selectbox(label='Wärmepumpe', options = heat_pump_options, key='heat_pump',index = 0) #'HP_air' # HP_ground, HP_water
             st_collector_st         = st.selectbox(label='Solarthermie Technologie (Nicht-konzentriert)', options = st_tech_options, key='st_collector', index = 0) 
             st_area                 = st.number_input(label='Solarthermie-Anlagenfläche', step=1., value=10., key='st_area') # 10 # m2
             co2_price_sim_st        = st.selectbox(label='CO2-Reduktionspfad', options = co2_price_options, key='co2_price_sim', index = 0)# 'BAU' # €/tCO2 --> write function to determine price per kg for sim selection
+            st.info('''Die einzelnen Reduktionspfade setzen einen bestimmten CO2-Preis voraus (in Euro je Tonne CO2-Äquivalente). 
+                        Dieser liegt bei dem Business-As-Usual Szenario bei ca. 35 €/tCO2.
+                        Ein CO2-Preis, der (laut manchen Simulationen) das erfüllen der Ziele des Pariserklimaabkommens zur Folge haben könnt, 
+                        nämlich die Erderwärmung unter 1.5 °C bzw. 2 °C zu halten, würde bei ca. 275 €/tCO2 bzw. 75 €/tCO2 liegen.
+                        Ein CO2-Preis, der (laut manchen Simulationen) Deutschland bis 2045 Klimaneutral machen könnte, wird bei 505.13 €/tCO2 festgelegt.
+                         ''', icon="ℹ️")
 
         
         submit1 = st.form_submit_button('Log Input Variables')
