@@ -67,7 +67,7 @@ with st.expander('Simulationsvariablen', expanded=True):
             lon                     = st.number_input(label='Längengrad', step=1., value=13.41, key='lon')
             # st.write('Der aktuelle Längengrad ist: ', lon)
             province_st             = st.selectbox(label='Bundesland', options = prov_options,key='province', index = 3)    #see list of provinces in XL
-            st.info('Nutzen Sie die Karte, um zu prüfen ob Ihre Koordinaten Eingabe richtig war!')
+            st.info('Nutzen Sie die Karte, um zu prüfen ob Ihre Koordinaten Eingabe richtig war!', icon="ℹ️")
             location = pd.DataFrame(np.array([[float(lat), float(lon)]]), columns=['lat', 'lon'])
             loc = st.map(location)
         
