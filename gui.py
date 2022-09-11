@@ -102,7 +102,7 @@ with st.expander('Simulationsvariablen', expanded=True):
         
         submit1 = st.form_submit_button('Eingabe speichern')
 
-GUI1 = st.button('Simulation beginnnen')
+GUI1 = st.checkbox('Simulation beginnnen')
 
 if GUI1:
     slp_type_elec   = elec_slp_data.index[elec_slp_data['name'] == slp_type_elec_st][0]
