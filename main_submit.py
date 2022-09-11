@@ -183,16 +183,16 @@ def submit(submission):
     new_price_energy  = new_price_gas + new_price_elec
 
     ## Savings in €
-    price_diff = pd.DataFrame(np.subtract(old_price_energy, new_price_energy) /100, columns = ['price_diff']) # positive means savings! 
+    price_diff = pd.DataFrame(np.subtract(old_price_energy, new_price_energy)/100, columns = ['price_diff']) # positive means savings! 
 
     #%% With CO2-Price
     old_price_co2 = old_co2 * co2_price_kg
-    old_price_total = np.add(old_price_co2,old_price_energy)/100
+    old_price_total = old_price_co2 + old_price_energy
 
     new_price_co2 = new_co2* co2_price_kg
-    new_price_total = np.add(new_price_co2,new_price_energy)/100
+    new_price_total = new_price_co2 + new_price_energy
 
-    total_diff = pd.DataFrame(np.subtract(old_price_total, new_price_total), columns = ['total_diff'])
+    total_diff = pd.DataFrame(np.subtract(old_price_total, new_price_total)/100, columns = ['total_diff'])
 
 
     #%% OUTPUT
