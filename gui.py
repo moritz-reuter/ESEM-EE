@@ -45,14 +45,14 @@ with st.expander('Programmbeschreibung'):
     st.header('Informationen zum bedienen des Tools')
     st.write('''
                 Viele deutsche Verbraucher*innen beschäftigt derzeit die Frage: "was würde passieren wenn ich meinen derzeitigen Wärme und Strombedarf ohne Gas decken müsste?" \n
-                Obowhl dieses Tool nicht primär danach ausgelegt ist, diese Frage zu beantworten, hat es dennoch manch hilfreiche Antworten parat.
-                Der Sinn und Zweck dieses Tools besteht in aller erster Linie darin, manchen Verbraucher*in die Möglichkeit zu veranschaulichen, was für Potenziale es bei Ihnen zu Hause gibt, um erneuerbare Energien (EE) einzusetzen. 
+                Obwohl dieses Tool nicht primär dafür entwickelt wurde, diese Frage zu beantworten, hat es dennoch manche hilfreiche Antworten parat.
+                Der Sinn und Zweck dieses Tools besteht in aller erster Linie darin, manchen Verbraucher*innen zu veranschaulichen was für Potenziale es bei Ihnen zu Hause gibt, um erneuerbare Energien (EE) einzusetzen. 
                 Diese Potenziale beziehen sich sowohl auf die CO2-Kompensation als auch auf die wirtschaftlichen Auswirkungen, die eine Einbindung von EE zur Folge haben könnten (auf maximal ein Jahr bezogen). \n
                 Dieses Tool ist (noch) nicht ein Investitions-Tool: es kann niemandem sagen was die optimale Auslegung einer PV-Anlage wäre, ob sich Sole- oder Luft-Wärmepumpen besser eignen, oder ob ein Vakuumröhrenkollektor 
                 besser ist als ein Flachkollektor bei dem ein oder anderen Standort. \n
-                Das Tool wird für Sie, nach eingabe der nötigen Simulationsvariablen, berehnen wie viel CO2 Sie dadurch kompensiert haben, dass Sie sowohl Photovoltaik zur Stromerzeugung als auch Solarthermie zur Wärmeerzeugung nutzen \n
-                und ihren jährlichen Gasverbrauch *komplett* durch die Nutzung einer Wärmempumpe ersetzt haben. Hierzu werden auch Ersparnisse oder Mehrkosten berechnet, die sich auf Ihree Verbrauchsausgaben beziehen aber nicht die 
-                nötigen Anschaffungskosten miteinbeziehen können. 
+                Das Tool wird für Sie, nach Eingabe der nötigen Simulationsvariablen, berehnen wie viel CO2 Sie dadurch kompensiert haben, dass Sie sowohl Photovoltaik zur Stromerzeugung als auch Solarthermie zur Wärmeerzeugung nutzen
+                und ihren jährlichen Gasverbrauch *komplett* durch die Nutzung einer Wärmempumpe ersetzt haben. Hierzu werden auch Ersparnisse oder Mehrkosten berechnet, die sich auf Ihre Verbrauchsausgaben beziehen aber nicht die 
+                nötigen Anschaffungskosten der einzelnen EE-Anlagen  miteinbeziehen können. \n
                 Falls Sie mehr über die Programmierung des Tools erfahren möchten, steht Ihnen eine detaillierte "Programmbeschreibung" zur Verfügung (clicken Sie einfach auf den Button). 
                 Dieser enthält auch Informationen zum Bedienen des Tools als auch dessen Annahmen und Empfehlungen für die Weiterentwicklung. Viel Spaß!
                 ''')
