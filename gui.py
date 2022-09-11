@@ -67,6 +67,7 @@ with st.expander('Simulationsvariablen', expanded=True):
             lon                     = st.number_input(label='Längengrad', step=1., value=13.41, key='lon')
             # st.write('Der aktuelle Längengrad ist: ', lon)
             province_st             = st.selectbox(label='Bundesland', options = prov_options,key='province', index = 3)    #see list of provinces in XL
+            st.info('Nutzen Sie die Karte, um zu prüfen ob Ihre Koordinaten Eingabe richtig war!')
             location = pd.DataFrame(np.array([[float(lat), float(lon)]]), columns=['lat', 'lon'])
             loc = st.map(location)
         
@@ -94,7 +95,7 @@ with st.expander('Simulationsvariablen', expanded=True):
         
         submit1 = st.form_submit_button('Log Input Variables')
 
-GUI1 = st.checkbox('Simulation beginnnen')
+GUI1 = st.button('Simulation beginnnen')
 
 if GUI1:
     slp_type_elec   = elec_slp_data.index[elec_slp_data['name'] == slp_type_elec_st][0]
