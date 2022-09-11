@@ -100,7 +100,7 @@ with st.expander('Simulationsvariablen', expanded=True):
                          ''', icon="ℹ️")
 
         
-        submit1 = st.form_submit_button('Log Input Variables')
+        submit1 = st.form_submit_button('Eingabe speichern')
 
 GUI1 = st.button('Simulation beginnnen')
 
@@ -157,7 +157,7 @@ if GUI1:
             end_date = col2.date_input('End Datum', df.iat[-1, 0], min_value=df.iat[0, 0], max_value=df.iat[-1, 0])
             end_time = col2.slider('End Uhrzeit', step=1, min_value=0, max_value=23, value=23)
 
-            submit2 = st.form_submit_button('Log Visualisation Settings')
+            submit2 = st.form_submit_button('Visualisierung beginnen')
 
     if submit2:
         start_time = str(start_time)+':00:00'
