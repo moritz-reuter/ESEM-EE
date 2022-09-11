@@ -244,7 +244,8 @@ if GUI1:
                     xaxis_title = "Zeit"
                 )
                 st.plotly_chart(fig)
-                # st.info('')
+                # st.info('''Vielleicht wundern Sie sich warum ihre Ersparnisse so gering ausfallen, selbst bei Einbezug der CO2-Kompensation.
+                #             ''')
             
             with st.expander('Ergebnisse: Zusammenfassung (für den gewählten Zeitraum)', expanded = False):
                 df.columns = ['index','Kompensation (in kg CO2)', 'Ersparnisse (in €)', 'Ersparnisse (in € inkl. CO2-Preis)']
