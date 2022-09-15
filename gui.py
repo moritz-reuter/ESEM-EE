@@ -250,7 +250,7 @@ if GUI1:
             with st.expander('Ergebnisse: Zusammenfassung (für den gewählten Zeitraum)', expanded = False):
                 df.columns = ['index','Kompensation (in kg CO2)', 'Ersparnisse (in €)', 'Ersparnisse (in € inkl. CO2-Preis)']
 
-                df_results = df.sum(axis = 0)
+                df_results = df.sum()
                 df_results.columns = ['Summierte Werte (für den ausgewählten Zeitraum)']
                 st.table(df_results)
 # %%
