@@ -58,7 +58,7 @@ def submit(submission):
 
     ###############################################
     co2_price = calc.co2_price(co2_price_sim, data) # --> kg!
-    co2_price_kg = co2_price/1000 # €/kgCO2
+    co2_price_kg = co2_price # --> €/kgCO2
 
     #%% Weather
     weather_hourly          = weather_fn.tmy_data(lat, lon)
@@ -88,7 +88,7 @@ def submit(submission):
     module              = "Silevo_Triex_U300_Black__2014_"
     inverter            = "ABB__MICRO_0_3_I_OUTD_US_240__240V_"
     pv_elec_watt_per_m2 = feedin_fn.pv_elec(weather_hourly, module, inverter, lat, lon)
-    pv_elec             = pd.DataFrame((pv_elec_watt_per_m2*pv_area) / 1000).set_index(time_index_year)
+    pv_elec             = pd.DataFrame((pv_elec_watt_per_m2*pv_area)).set_index(time_index_year) #--> kWh!
 
     #%%
     ### Wind [kWh] ### --> BUG
@@ -102,7 +102,7 @@ def submit(submission):
     #%% Solar thermal - Heat feedin
     soltherm_data = helper_functions.sheet_xl(data, 'soltherm_data')
 
-    st_feedin_spec  = thermal_fn.soltherm_heat(st_collector, lat, lon, soltherm_data, weather_hourly, time_index_year) / 1000
+    st_feedin_spec  = thermal_fn.soltherm_heat(st_collector, lat, lon, soltherm_data, weather_hourly, time_index_year) #--> kWh!
     st_feedin       = st_feedin_spec * st_area
 
     #%% Heat pump
@@ -125,7 +125,7 @@ def submit(submission):
     #             temp_low = T_in,
     #             quality_grade = quality_grade_hp)
                 
-    cop = [2.6] * len(weather_hourly)
+    cop = [2.6] * len(weather_hourly) # TODO! 
     heat_pump_el = heat_demand_renewable / cop
     # jaz = heat_demand_hourly.sum() / heat_pump_el.sum()
 
@@ -133,7 +133,7 @@ def submit(submission):
     #%% ###### CO2 emissions ##############
 
     #%% Electricity
-    co2_old_elec = calc.co2_kwh(elec_mix_old, tech_data, elec_demand_hourly) /1000
+    co2_old_elec = calc.co2_kwh(elec_mix_old, tech_data, elec_demand_hourly) #--> kg/kWh umrechnung
 
     ####
     new_elec_demand = heat_pump_el + elec_demand_hourly
@@ -145,19 +145,19 @@ def submit(submission):
 
     ren_tech_co2 = []
     for ren_tech in renewable_elec:
-        ren_tech_co2.append(calc.co2_kwh(ren_tech, tech_data, renewable_feedin_dict[ren_tech]) /1000)
+        ren_tech_co2.append(calc.co2_kwh(ren_tech, tech_data, renewable_feedin_dict[ren_tech]))
 
 
     residual_load = new_elec_demand - renewable_feedin.sum(axis = 1)
 
-    co2_grid = calc.co2_kwh(elec_mix_old, tech_data, residual_load) / 1000
+    co2_grid = calc.co2_kwh(elec_mix_old, tech_data, residual_load)
 
     co2_sum_new = co2_grid + sum(ren_tech_co2)
     #%%
     co2_new_elec = pd.DataFrame(co2_sum_new).set_index(time_index_year)
 
     ##%% Gas 
-    co2_old_gas = calc.co2_kwh(heat_tech, tech_data, heat_demand_hourly) / 1000
+    co2_old_gas = calc.co2_kwh(heat_tech, tech_data, heat_demand_hourly)
 
 
     #### --> adapt to necessary gas demand...
@@ -183,7 +183,7 @@ def submit(submission):
     new_price_energy  = new_price_gas + new_price_elec
 
     ## Savings in €
-    price_diff = pd.DataFrame(np.subtract(old_price_energy, new_price_energy)/100, columns = ['price_diff']) # positive means savings! 
+    price_diff = pd.DataFrame(np.subtract(old_price_energy, new_price_energy), columns = ['price_diff']) # positive means savings! 
 
     #%% With CO2-Price
     old_price_co2 = old_co2 * co2_price_kg
@@ -192,7 +192,7 @@ def submit(submission):
     new_price_co2 = new_co2* co2_price_kg
     new_price_total = new_price_co2 + new_price_energy
 
-    total_diff = pd.DataFrame(np.subtract(old_price_total, new_price_total)/100, columns = ['total_diff'])
+    total_diff = pd.DataFrame(np.subtract(old_price_total, new_price_total), columns = ['total_diff'])
 
 
     #%% OUTPUT
