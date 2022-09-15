@@ -88,7 +88,7 @@ def submit(submission):
     module              = "Silevo_Triex_U300_Black__2014_"
     inverter            = "ABB__MICRO_0_3_I_OUTD_US_240__240V_"
     pv_elec_watt_per_m2 = feedin_fn.pv_elec(weather_hourly, module, inverter, lat, lon)
-    pv_elec             = pd.DataFrame((pv_elec_watt_per_m2*pv_area)).set_index(time_index_year) #--> kWh!
+    pv_elec             = pd.DataFrame((pv_elec_watt_per_m2*pv_area)/1000).set_index(time_index_year) #--> kWh!
 
     #%%
     ### Wind [kWh] ### --> BUG
@@ -102,7 +102,7 @@ def submit(submission):
     #%% Solar thermal - Heat feedin
     soltherm_data = helper_functions.sheet_xl(data, 'soltherm_data')
 
-    st_feedin_spec  = thermal_fn.soltherm_heat(st_collector, lat, lon, soltherm_data, weather_hourly, time_index_year) #--> kWh!
+    st_feedin_spec  = thermal_fn.soltherm_heat(st_collector, lat, lon, soltherm_data, weather_hourly, time_index_year)/1000 #--> kWh!
     st_feedin       = st_feedin_spec * st_area
 
     #%% Heat pump
@@ -110,7 +110,7 @@ def submit(submission):
     heat_pump_el returns the electrical demand kWh of a heat pump that satisfies the hourly heat demand given by the gas slp profile
     '''
 
-    T_in, T_out, quality_grade_hp = thermal_fn.heating_params(heat_system, heat_pump, weather_hourly)
+    # T_in, T_out, quality_grade_hp = thermal_fn.heating_params(heat_system, heat_pump, weather_hourly)
 
     heat_demand_renewable = heat_demand_hourly - st_feedin['collectors_heat']
 
