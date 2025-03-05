@@ -6,7 +6,7 @@ import oemof.thermal as therm
 import pandas as pd
 import numpy as np
 
-### User 'packages'
+#%%User 'packages'
 import demand_fn
 import weather_fn
 import thermal_fn

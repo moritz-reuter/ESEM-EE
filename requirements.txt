@@ -82,7 +82,7 @@ numpy==1.21.6
 oedialect==0.0.10
 oemof==0.2.0
 oemof.db==0.0.6
-oemof.network==0.4.0
+oemof.network==0.4.0rc0
 oemof.solph==0.4.4
 oemof.thermal==0.0.5
 oemof.tools==0.4.1
