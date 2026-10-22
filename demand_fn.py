@@ -5,6 +5,8 @@ import helper_functions
 import os
 import pandas as pd
 import datetime
+import calendar
+import numpy as np
 
 ## Data - Filepath ##
 data = 'data.xlsx'
@@ -38,9 +40,17 @@ def elec_slp(year, province, sector, ann_demand):
     e_slp = bdew.elec_slp.ElecSlp(year, holidays=pr_dict[province])
 
     elec_demand = e_slp.get_profile(lp_dict).asfreq('H')
-
+    elec_demand = _drop_leap_day(elec_demand, ann_demand)
 
     return elec_demand
+
+def _drop_leap_day(profile, ann_demand):
+    # weather (TMY) has 8760 h --> remove Feb 29 and rescale to the annual demand
+    mask = (profile.index.month == 2) & (profile.index.day == 29)
+    if not mask.any():
+        return profile
+    profile = profile[~mask]
+    return profile * ann_demand / profile.sum()
 
 # %% Function - HeatSlp
 def heat_slp(year, province, sector, ann_demand, weather):
@@ -85,10 +95,14 @@ def heat_slp(year, province, sector, ann_demand, weather):
         orient = 'index',
         columns = ['holidays', 'wind_class']
     )
+    n_hours = 8784 if calendar.isleap(year) else 8760
+    temperature = weather['temp_air']
+    if n_hours == 8784: # TMY has no Feb 29 --> repeat Feb 28 temperatures
+        temperature = pd.Series(np.insert(temperature.values, 1416, temperature.values[1392:1416]))
     heat_demand_hourly = bdew.HeatBuilding(
-            pd.date_range(datetime.datetime(year, 1, 1, 0), periods=8760, freq="H"), 
+            pd.date_range(datetime.datetime(year, 1, 1, 0), periods=n_hours, freq="H"),
             holidays=df_province['holidays'].loc[province],      #dict province
-            temperature=weather['temp_air'],    #series csv read in
+            temperature=temperature,    #series csv read in
             shlp_type=sector,  #database building_type --> join?
             building_class= int(df_building['building_class'].loc[sector]), #dict province --> always 0!
             wind_class= int(df_province['wind_class'].loc[province]),  #dict province
@@ -99,4 +113,4 @@ def heat_slp(year, province, sector, ann_demand, weather):
 
     # regions = config.index
 
-    return heat_demand_hourly
+    return _drop_leap_day(heat_demand_hourly, ann_demand)

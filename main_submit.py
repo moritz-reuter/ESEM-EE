@@ -16,6 +16,7 @@ import calc
 
 ###########################
 data = 'data.xlsx'
+EXPORT_PRICE_CT_KWH = 8.0 # ct/kWh paid for surplus PV fed into the grid (assumption, flat price)
 ###########################'
 
 def submit(submission):
@@ -88,7 +89,7 @@ def submit(submission):
     module              = "Silevo_Triex_U300_Black__2014_"
     inverter            = "ABB__MICRO_0_3_I_OUTD_US_240__240V_"
     pv_elec_watt_per_m2 = feedin_fn.pv_elec(weather_hourly, module, inverter, lat, lon)
-    pv_elec             = pd.DataFrame((pv_elec_watt_per_m2*pv_area)/1000).set_index(time_index_year) #--> kWh!
+    pv_elec             = pd.DataFrame((pv_elec_watt_per_m2*pv_area)/1000).set_index(time_index_year).clip(lower=0) #--> kWh! (inverter standby draw at night is not generation)
 
     #%%
     ### Wind [kWh] ### --> BUG
@@ -112,7 +113,8 @@ def submit(submission):
 
     # T_in, T_out, quality_grade_hp = thermal_fn.heating_params(heat_system, heat_pump, weather_hourly)
 
-    heat_demand_renewable = heat_demand_hourly - st_feedin['collectors_heat']
+    # solar thermal surplus (summer) cannot be stored/used --> residual heat demand is never negative
+    heat_demand_renewable = (heat_demand_hourly - st_feedin['collectors_heat']).clip(lower=0)
 
     '''
     heat_pump_el calculates the (additional) hourly electricity demand stemming from the use of a heat pump for heating.
@@ -149,8 +151,10 @@ def submit(submission):
 
 
     residual_load = new_elec_demand - renewable_feedin.sum(axis = 1)
+    grid_import   = residual_load.clip(lower=0)     # kWh bought from the grid
+    grid_export   = (-residual_load).clip(lower=0)  # kWh surplus fed into the grid (no CO2 credit, only revenue)
 
-    co2_grid = calc.co2_kwh(elec_mix_old, tech_data, residual_load)
+    co2_grid = calc.co2_kwh(elec_mix_old, tech_data, grid_import)
 
     co2_sum_new = co2_grid + sum(ren_tech_co2)
     #%%
@@ -177,7 +181,8 @@ def submit(submission):
     old_price_elec = calc.price_kwh(elec_mix_old,tech_data,elec_demand_hourly)
     old_price_gas = calc.price_kwh(heat_tech, tech_data, heat_demand_hourly)
 
-    new_price_elec = calc.price_kwh(elec_mix_old, tech_data, new_elec_demand)
+    export_revenue = grid_export * EXPORT_PRICE_CT_KWH / 100 # €
+    new_price_elec = calc.price_kwh(elec_mix_old, tech_data, grid_import) - export_revenue
     new_price_gas  = calc.price_kwh(heat_tech, tech_data, new_gas_demand[0])
     old_price_energy = old_price_elec + old_price_gas
     new_price_energy  = new_price_gas + new_price_elec

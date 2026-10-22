@@ -70,7 +70,7 @@ with st.expander('Simulationsvariablen', expanded=True):
         
         with tab1:
             st.header('Basis Informationen')
-            year                    = st.number_input(label='(Simulations-)Jahr', step=1, min_value=2010, max_value=2022, value=2022, key='year')
+            year                    = st.number_input(label='(Simulations-)Jahr', step=1, min_value=2010, max_value=dt.date.today().year, value=dt.date.today().year, key='year')
             # number_household    = col1.number_input(label='Anzahl der Personen im Haushalt', step=1, min_value=1, max_value=10, value=2,key='occupants')     
             lat                     = st.number_input(label='Breitengrad', step=1., value=52.52, key='lat')
             # st.write('Der aktuelle Breitengrad ist: ', lat)
