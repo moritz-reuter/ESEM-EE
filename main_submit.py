@@ -13,10 +13,11 @@ import thermal_fn
 import helper_functions
 import feedin_fn
 import calc
+import price_fn
 
 ###########################
 data = 'data.xlsx'
-EXPORT_PRICE_CT_KWH = 8.0 # ct/kWh paid for surplus PV fed into the grid (assumption, flat price)
+EXPORT_PRICE_CT_KWH = 8.0 # ct/kWh paid for surplus PV fed into the grid - fallback if the day-ahead prices (price_fn) are unavailable
 ###########################'
 
 def submit(submission):
@@ -181,7 +182,12 @@ def submit(submission):
     old_price_elec = calc.price_kwh(elec_mix_old,tech_data,elec_demand_hourly)
     old_price_gas = calc.price_kwh(heat_tech, tech_data, heat_demand_hourly)
 
-    export_revenue = grid_export * EXPORT_PRICE_CT_KWH / 100 # €
+    try:
+        export_price = price_fn.spot_price_hourly(year, time_index_year) # ct/kWh
+    except Exception:
+        st.warning(f'Börsenstrompreise (Energy-Charts) nicht verfügbar - es wird ein fester Einspeisepreis von {EXPORT_PRICE_CT_KWH} ct/kWh angenommen.')
+        export_price = EXPORT_PRICE_CT_KWH
+    export_revenue = grid_export * export_price / 100 # €
     new_price_elec = calc.price_kwh(elec_mix_old, tech_data, grid_import) - export_revenue
     new_price_gas  = calc.price_kwh(heat_tech, tech_data, new_gas_demand[0])
     old_price_energy = old_price_elec + old_price_gas
